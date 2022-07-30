@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -21,13 +20,13 @@ public class ProjectController {
     }
 
     @GetMapping("/projects")
-    public List<Project> all() {
+    public List<Project> getAll() {
         // TODO: update crowdfunding progress from CKB
         return repository.findAll();
     }
 
     @GetMapping("/projects/{id}")
-    public Project one(@PathVariable Long id) {
+    public Project getOne(@PathVariable Long id) {
         // TODO: update crowdfunding progress from CKB
         return repository.findById(id)
                 .orElseThrow(() -> new ProjectNotFoundException(id));
@@ -37,7 +36,9 @@ public class ProjectController {
     public Project newProject(@RequestBody Project newProject) {
         // TODO: 1. send tx on CKB to create c-cell
         //       2. store on-chain information to DB
-        newProject.setStarDate(LocalDate.now());
+        for (Long pledgeAmount: newProject.getDeliveries().keySet()) {
+            newProject.setNumberOfBackerInDelivery(pledgeAmount, 0);
+        }
         Project project = repository.save(newProject);
         log.info("save new project: " + project);
         return project;
@@ -49,9 +50,15 @@ public class ProjectController {
                 .map(project -> {
                     project.setName(newProject.getName());
                     project.setDescription(newProject.getDescription());
+                    project.setCreatorAddress(newProject.getCreatorAddress());
                     project.setTarget(newProject.getTarget());
-                    project.setMilestoneDates(newProject.getMilestoneDates());
-                    project.setMilestoneTargets(newProject.getMilestoneTargets());
+                    project.setStarDate(newProject.getStarDate());
+                    project.setEndDate(newProject.getEndDate());
+                    project.setMilestones(newProject.getMilestones());
+                    project.setDeliveries(newProject.getDeliveries());
+                    project.setNumberOfBacker(newProject.getNumberOfBacker());
+                    project.setNumberOfBackerInDeliveries(newProject.getNumberOfBackerInDeliveries());
+                    project.setStatus(newProject.getStatus());
                     return repository.save(project);
                 })
                 .orElseGet(() -> {
@@ -67,16 +74,32 @@ public class ProjectController {
 
     @PostMapping("/projects/{id}/pledge")
     public void pledgeProject(@RequestBody Backer backer, @PathVariable Long id) {
+        Project project = getOne(id);
+        project.incrementNumberOfBacker();
+        // update number of backer in delivery
+        Long[] pledgeAmounts = project.getDeliveries().keySet().toArray(new Long[0]);
+        pledgeAmounts = java.util.Arrays.copyOf(pledgeAmounts, pledgeAmounts.length + 1);
+        pledgeAmounts[pledgeAmounts.length - 1] = Long.MAX_VALUE;
+        for (int i = pledgeAmounts.length - 1; i >= 0; i++) {
+            if (backer.getPledgeAmount() >= pledgeAmounts[i]) {
+                project.incrementNumberOfBackerInDelivery(pledgeAmounts[i]);
+                break;
+            }
+        }
         // TODO: Send tx to the cheque-like address
     }
 
     @PostMapping("/projects/{id}/voteno")
     public void voteNo(@RequestBody Backer backer, @PathVariable Long id) {
+        Project project = getOne(id);
+        project.getNextMilestone().incrementNumberOfVoteNo();
         // TODO: Send tx to vote no
     }
 
     @PostMapping("/projects/{id}/refund")
     public void refund(@PathVariable Long id) {
+        Project project = getOne(id);
+        project.setStatus(Project.Status.FAILED);
         // TODO: send tx to refund
     }
 }

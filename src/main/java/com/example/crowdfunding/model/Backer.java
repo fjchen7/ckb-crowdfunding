@@ -2,7 +2,7 @@ package com.example.crowdfunding.model;
 
 public class Backer {
     private String privateKey;
-    private long amount;  // in CKBytes
+    private long pledgeAmount;  // in CKBytes
 
     public String getPrivateKey() {
         return privateKey;
@@ -12,19 +12,19 @@ public class Backer {
         this.privateKey = privateKey;
     }
 
-    public long getAmount() {
-        return amount;
+    public long getPledgeAmount() {
+        return pledgeAmount;
     }
 
-    public void setAmount(long amount) {
-        this.amount = amount;
+    public void setPledgeAmount(long pledgeAmount) {
+        this.pledgeAmount = pledgeAmount;
     }
 
     @Override
     public String toString() {
         return "Backer{" +
                 "privateKey='" + privateKey + '\'' +
-                ", amount=" + amount +
+                ", pledgeAmount=" + pledgeAmount +
                 '}';
     }
 }
