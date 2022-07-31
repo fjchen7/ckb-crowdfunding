@@ -48,17 +48,45 @@ public class ProjectController {
     public Project replaceProject(@RequestBody Project newProject, @PathVariable Long id) {
         return repository.findById(id)
                 .map(project -> {
-                    project.setName(newProject.getName());
-                    project.setDescription(newProject.getDescription());
-                    project.setCreatorAddress(newProject.getCreatorAddress());
-                    project.setTargetCKB(newProject.getTargetCKB());
-                    project.setStartDate(newProject.getStartDate());
-                    project.setEndDate(newProject.getEndDate());
-                    project.setMilestones(newProject.getMilestones());
-                    project.setDeliveries(newProject.getDeliveries());
-                    project.setNumberOfBacker(newProject.getNumberOfBacker());
-                    project.setNumberOfBackerInDeliveries(newProject.getNumberOfBackerInDeliveries());
-                    project.setStatus(newProject.getStatus());
+                    if (newProject.getStatus() != null) {
+                        project.setStatus(newProject.getStatus());
+                    }
+                    if (newProject.getName() != null) {
+                        project.setName(newProject.getName());
+                    }
+                    if (newProject.getDescription() != null) {
+                        project.setDescription(newProject.getDescription());
+                    }
+                    if (newProject.getCreatorAddress() != null) {
+                        project.setCreatorAddress(newProject.getCreatorAddress());
+                    }
+                    if (newProject.getTargetCKB() != null) {
+                        project.setTargetCKB(newProject.getTargetCKB());
+                    }
+                    if (newProject.getStartDate() != null) {
+                        project.setStartDate(newProject.getStartDate());
+                    }
+                    if (newProject.getEndDate() != null) {
+                        project.setEndDate(newProject.getEndDate());
+                    }
+                    if (newProject.getMilestones() != null) {
+                        project.setMilestones(newProject.getMilestones());
+                    }
+                    if (newProject.getDeliveries() != null) {
+                        project.setDeliveries(newProject.getDeliveries());
+                    }
+                    if (newProject.getNextMilestoneIndex() != null) {
+                        project.setNextMilestoneIndex(newProject.getNextMilestoneIndex());
+                    }
+                    if (newProject.getPledgedCKB() != null) {
+                        project.setPledgedCKB(newProject.getPledgedCKB());
+                    }
+                    if (newProject.getNumberOfBacker() != null) {
+                        project.setNumberOfBacker(newProject.getNumberOfBacker());
+                    }
+                    if (newProject.getNumberOfBackerInDeliveries() != null) {
+                        project.setNumberOfBackerInDeliveries(newProject.getNumberOfBackerInDeliveries());
+                    }
                     return repository.save(project);
                 })
                 .orElseGet(() -> {
