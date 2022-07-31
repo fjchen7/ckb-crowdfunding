@@ -51,8 +51,8 @@ public class ProjectController {
                     project.setName(newProject.getName());
                     project.setDescription(newProject.getDescription());
                     project.setCreatorAddress(newProject.getCreatorAddress());
-                    project.setTarget(newProject.getTarget());
-                    project.setStarDate(newProject.getStarDate());
+                    project.setTargetCKB(newProject.getTargetCKB());
+                    project.setStartDate(newProject.getStartDate());
                     project.setEndDate(newProject.getEndDate());
                     project.setMilestones(newProject.getMilestones());
                     project.setDeliveries(newProject.getDeliveries());
@@ -77,12 +77,12 @@ public class ProjectController {
         Project project = getOne(id);
         project.incrementNumberOfBacker();
         // update number of backer in delivery
-        Long[] pledgeAmounts = project.getDeliveries().keySet().toArray(new Long[0]);
-        pledgeAmounts = java.util.Arrays.copyOf(pledgeAmounts, pledgeAmounts.length + 1);
-        pledgeAmounts[pledgeAmounts.length - 1] = Long.MAX_VALUE;
-        for (int i = pledgeAmounts.length - 1; i >= 0; i++) {
-            if (backer.getPledgeAmount() >= pledgeAmounts[i]) {
-                project.incrementNumberOfBackerInDelivery(pledgeAmounts[i]);
+        Long[] pledgedAmounts = project.getDeliveries().keySet().toArray(new Long[0]);
+        pledgedAmounts = java.util.Arrays.copyOf(pledgedAmounts, pledgedAmounts.length + 1);
+        pledgedAmounts[pledgedAmounts.length - 1] = Long.MAX_VALUE;
+        for (int i = pledgedAmounts.length - 1; i >= 0; i++) {
+            if (backer.getPledgedCKB() >= pledgedAmounts[i]) {
+                project.incrementNumberOfBackerInDelivery(pledgedAmounts[i]);
                 break;
             }
         }

@@ -1,7 +1,5 @@
 package com.example.crowdfunding.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -18,7 +16,8 @@ public class Project {
     private String name;
     private String description;
     private String creatorAddress;
-    private long target;  // in CKBytes
+    private long targetCKB;
+    private LocalDate startDate;
     private LocalDate endDate;
     @Column(columnDefinition = "BLOB NOT NULL")
     private Milestone[] milestones;
@@ -26,20 +25,14 @@ public class Project {
     @Column(columnDefinition = "BLOB NOT NULL")
     private Map<Long, String> deliveries;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private int nextMilestoneIndex;
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private LocalDate starDate;
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private long current;  // in CKBytes
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private long pledgedCKB;
     private int numberOfBacker;
     @ElementCollection
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Map<Long, Integer> numberOfBackerInDeliveries;
 
     public Project() {
-        starDate = LocalDate.now();
+        startDate = LocalDate.now();
         status = Status.CREATED;
         milestones = new Milestone[0];
         deliveries = new TreeMap<>();
@@ -87,12 +80,12 @@ public class Project {
         this.creatorAddress = creatorAddress;
     }
 
-    public long getTarget() {
-        return target;
+    public long getTargetCKB() {
+        return targetCKB;
     }
 
-    public void setTarget(long target) {
-        this.target = target;
+    public void setTargetCKB(long targetCKB) {
+        this.targetCKB = targetCKB;
     }
 
     public LocalDate getEndDate() {
@@ -143,20 +136,20 @@ public class Project {
         this.nextMilestoneIndex++;
     }
 
-    public LocalDate getStarDate() {
-        return starDate;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public void setStarDate(LocalDate starDate) {
-        this.starDate = starDate;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
-    public long getCurrent() {
-        return current;
+    public long getPledgedCKB() {
+        return pledgedCKB;
     }
 
-    public void setCurrent(long current) {
-        this.current = current;
+    public void setPledgedCKB(long pledgedCKB) {
+        this.pledgedCKB = pledgedCKB;
     }
 
     public int getNumberOfBacker() {
@@ -191,15 +184,17 @@ public class Project {
     public String toString() {
         return "Project{" +
                 "id=" + id +
+                ", status=" + status +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", creatorAddress='" + creatorAddress + '\'' +
-                ", target=" + target +
+                ", targetCKB=" + targetCKB +
+                ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 ", milestones=" + Arrays.toString(milestones) +
                 ", deliveries=" + deliveries +
-                ", starDate=" + starDate +
-                ", current=" + current +
+                ", nextMilestoneIndex=" + nextMilestoneIndex +
+                ", pledgedCKB=" + pledgedCKB +
                 ", numberOfBacker=" + numberOfBacker +
                 ", numberOfBackerInDeliveries=" + numberOfBackerInDeliveries +
                 '}';

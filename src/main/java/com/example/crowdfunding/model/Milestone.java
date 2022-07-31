@@ -8,16 +8,16 @@ import java.time.LocalDate;
 public class Milestone implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dueDate;
-    private int targetPercentage;
+    private long requiredCKB;
     private String description;
     private int numberOfVoteNo;
 
     public Milestone() {
     }
 
-    public Milestone(LocalDate dueDate, int targetPercentage, String description) {
+    public Milestone(LocalDate dueDate, int requiredCKB, String description) {
         this.dueDate = dueDate;
-        this.targetPercentage = targetPercentage;
+        this.requiredCKB = requiredCKB;
         this.description = description;
     }
 
@@ -29,12 +29,12 @@ public class Milestone implements Serializable {
         this.dueDate = dueDate;
     }
 
-    public int getTargetPercentage() {
-        return targetPercentage;
+    public long getRequiredCKB() {
+        return requiredCKB;
     }
 
-    public void setTargetPercentage(int targetPercentage) {
-        this.targetPercentage = targetPercentage;
+    public void setRequiredCKB(long requiredCKB) {
+        this.requiredCKB = requiredCKB;
     }
 
     public String getDescription() {
@@ -61,8 +61,9 @@ public class Milestone implements Serializable {
     public String toString() {
         return "Milestone{" +
                 "dueDate=" + dueDate +
-                ", targetPercentage=" + targetPercentage +
+                ", requiredCKB=" + requiredCKB +
                 ", description='" + description + '\'' +
+                ", numberOfVoteNo=" + numberOfVoteNo +
                 '}';
     }
 }

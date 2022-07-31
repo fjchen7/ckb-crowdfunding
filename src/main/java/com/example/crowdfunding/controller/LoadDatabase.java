@@ -23,9 +23,9 @@ class LoadDatabase implements WebMvcConfigurer {
             Project project1 = new Project();
             project1.setName("A project");
             project1.setDescription("blabla");
-            project1.setCurrent(31500L);
-            project1.setTarget(1000000L);
-            project1.setStarDate(LocalDate.of(2022, 7, 1));
+            project1.setPledgedCKB(31500L);
+            project1.setTargetCKB(1000000L);
+            project1.setStartDate(LocalDate.of(2022, 7, 1));
             project1.setEndDate(LocalDate.of(2022, 10, 1));
             project1.setCreatorAddress("ckt1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsq0yvcdtsu5wcr2jldtl72fhkruf0w5vymsp6rk9r");
             project1.setStatus(Project.Status.PLEDGING);
@@ -45,9 +45,9 @@ class LoadDatabase implements WebMvcConfigurer {
             Project project2 = new Project();
             project2.setName("A video game");
             project2.setDescription("A ACT game");
-            project2.setCurrent(0L);
-            project2.setTarget(10000L);
-            project2.setStarDate(LocalDate.of(2022, 9, 1));
+            project2.setPledgedCKB(0L);
+            project2.setTargetCKB(10000L);
+            project2.setStartDate(LocalDate.of(2022, 9, 1));
             project2.setEndDate(LocalDate.of(2022, 12, 1));
             project2.setCreatorAddress("ckt1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsqvglkprurm00l7hrs3rfqmmzyy3ll7djdsujdm6z");
             project2.setStatus(Project.Status.CREATED);
