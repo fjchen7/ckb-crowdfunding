@@ -32,14 +32,40 @@ public class Project {
     private Map<Long, Integer> numberOfBackerInDeliveries;
 
     public Project() {
-        startDate = LocalDate.now();
-        status = Status.CREATED;
-        milestones = new Milestone[0];
-        deliveries = new TreeMap<>();
-        nextMilestoneIndex = 0;
-        pledgedCKB = 0L;
-        numberOfBacker = 0;
-        numberOfBackerInDeliveries = new TreeMap<>();
+    }
+
+    public static void init(Project project) {
+        project.startDate = LocalDate.now();
+        if (project.status == null) {
+            project.status = Status.CREATED;
+        }
+        if (project.milestones == null) {
+            project.milestones = new Milestone[0];
+        }
+        for (Milestone milestone: project.milestones) {
+            milestone.setNumberOfVotedNo(0);
+        }
+        if (project.deliveries == null) {
+            project.deliveries = new TreeMap<>();
+        }
+        if (project.nextMilestoneIndex == null) {
+            project.nextMilestoneIndex = 0;
+        }
+        if (project.pledgedCKB == null) {
+            project.pledgedCKB = 0L;
+        }
+        if (project.numberOfBacker == null) {
+            project.numberOfBacker = 0;
+        }
+        if (project.numberOfBackerInDeliveries == null) {
+            project.numberOfBackerInDeliveries = new TreeMap<>();
+        }
+        if (project.deliveries == null) {
+            project.numberOfBackerInDeliveries = new TreeMap<>();
+            for (Long pledgeAmount: project.numberOfBackerInDeliveries.keySet()) {
+                project.numberOfBackerInDeliveries.put(pledgeAmount, 0);
+            }
+        }
     }
 
     public Long getId() {
@@ -118,8 +144,10 @@ public class Project {
     }
 
     public void setDelivery(long pledgeAmount, String delivery) {
+        if (this.deliveries == null) {
+            this.deliveries = new TreeMap<>();
+        }
         deliveries.put(pledgeAmount, delivery);
-        this.setNumberOfBackerInDelivery(pledgeAmount, 0);
     }
 
     public Integer getNextMilestoneIndex() {
@@ -183,11 +211,14 @@ public class Project {
     }
 
     public void setNumberOfBackerInDelivery(Long pledgeAmount, Integer numberOfBacker) {
+        if (this.numberOfBackerInDeliveries == null) {
+            this.numberOfBackerInDeliveries = new TreeMap<>();
+        }
         numberOfBackerInDeliveries.put(pledgeAmount, numberOfBacker);
     }
 
     public void incrementNumberOfBackerInDelivery(Long pledgeAmount) {
-        numberOfBackerInDeliveries.put(pledgeAmount, numberOfBackerInDeliveries.get(pledgeAmount) + 1);
+        setNumberOfBackerInDelivery(pledgeAmount, numberOfBackerInDeliveries.get(pledgeAmount) + 1);
     }
 
     @Override

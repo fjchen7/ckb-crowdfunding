@@ -38,8 +38,11 @@ class LoadDatabase implements WebMvcConfigurer {
                 put(10000L, "A manual + instruction book");
                 put(100000L, "A manual + instruction book + original drawing design book");
             }});
-            project1.setNumberOfBackerInDelivery(1000L, 10);
-            project1.setNumberOfBackerInDelivery(10000L, 2);
+            project1.setNumberOfBackerInDeliveries(new TreeMap<Long, Integer>() {{
+                put(1000L, 10);
+                put(10000L, 2);
+                put(100000L, 0);
+            }});
             project1.setNumberOfBacker(15);
 
             Project project2 = new Project();
@@ -59,6 +62,11 @@ class LoadDatabase implements WebMvcConfigurer {
                 put(1000L, "A painting");
                 put(10000L, "A painting + base game");
                 put(100000L, "A painting + base game + DLC");
+            }});
+            project2.setNumberOfBackerInDeliveries(new TreeMap<Long, Integer>() {{
+                put(1000L, 0);
+                put(10000L, 0);
+                put(100000L, 0);
             }});
 
             log.info("Preloading " + repository.save(project1));

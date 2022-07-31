@@ -13,8 +13,6 @@ public class Milestone implements Serializable {
     private Integer numberOfVotedNo;
 
     public Milestone() {
-        numberOfVotedNo = 0;
-        requiredCKBPercentage = 0L;
     }
 
     public Milestone(LocalDate dueDate, long requiredCKBPercentage, String description) {
@@ -22,6 +20,7 @@ public class Milestone implements Serializable {
         this.dueDate = dueDate;
         this.requiredCKBPercentage = requiredCKBPercentage;
         this.description = description;
+        this.numberOfVotedNo = 0;
     }
 
     public LocalDate getDueDate() {

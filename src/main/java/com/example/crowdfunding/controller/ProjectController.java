@@ -36,9 +36,7 @@ public class ProjectController {
     public Project newProject(@RequestBody Project newProject) {
         // TODO: 1. send tx on CKB to create c-cell
         //       2. store on-chain information to DB
-        for (Long pledgeAmount: newProject.getDeliveries().keySet()) {
-            newProject.setNumberOfBackerInDelivery(pledgeAmount, 0);
-        }
+        Project.init(newProject);
         Project project = repository.save(newProject);
         log.info("save new project: " + project);
         return project;
