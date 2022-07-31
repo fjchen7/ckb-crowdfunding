@@ -30,9 +30,9 @@ class LoadDatabase implements WebMvcConfigurer {
             project1.setCreatorAddress("ckt1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsq0yvcdtsu5wcr2jldtl72fhkruf0w5vymsp6rk9r");
             project1.setStatus(Project.Status.PLEDGING);
             project1.setMilestones(new Milestone[]{
-                    new Milestone(LocalDate.of(2022, 12, 1), 30, "Publish 3 levels, need 30% of funding"),
-                    new Milestone(LocalDate.of(2023, 12, 1), 70, "Publish Early Access, need 70% of funding"),
-                    new Milestone(LocalDate.of(2024, 12, 1), 100, "Publish final version, need 100% of funding")});
+                    new Milestone(LocalDate.of(2022, 12, 1), 30L, "Publish 3 levels, need 30% of funding"),
+                    new Milestone(LocalDate.of(2023, 12, 1), 70L, "Publish Early Access, need 70% of funding"),
+                    new Milestone(LocalDate.of(2024, 12, 1), 100L, "Publish final version, need 100% of funding")});
             project1.setDeliveries(new TreeMap<Long, String>() {{
                 put(1000L, "A manual");
                 put(10000L, "A manual + instruction book");

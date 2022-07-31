@@ -16,7 +16,7 @@ public class Project {
     private String name;
     private String description;
     private String creatorAddress;
-    private long targetCKB;
+    private Long targetCKB;
     private LocalDate startDate;
     private LocalDate endDate;
     @Column(columnDefinition = "BLOB NOT NULL")
@@ -25,9 +25,9 @@ public class Project {
     @Column(columnDefinition = "BLOB NOT NULL")
     private Map<Long, String> deliveries;
 
-    private int nextMilestoneIndex;
-    private long pledgedCKB;
-    private int numberOfBacker;
+    private Integer nextMilestoneIndex;
+    private Long pledgedCKB;
+    private Integer numberOfBacker;
     @ElementCollection
     private Map<Long, Integer> numberOfBackerInDeliveries;
 
@@ -36,6 +36,8 @@ public class Project {
         status = Status.CREATED;
         milestones = new Milestone[0];
         deliveries = new TreeMap<>();
+        nextMilestoneIndex = 0;
+        pledgedCKB = 0L;
         numberOfBacker = 0;
         numberOfBackerInDeliveries = new TreeMap<>();
     }
@@ -80,11 +82,11 @@ public class Project {
         this.creatorAddress = creatorAddress;
     }
 
-    public long getTargetCKB() {
+    public Long getTargetCKB() {
         return targetCKB;
     }
 
-    public void setTargetCKB(long targetCKB) {
+    public void setTargetCKB(Long targetCKB) {
         this.targetCKB = targetCKB;
     }
 
@@ -120,20 +122,28 @@ public class Project {
         this.setNumberOfBackerInDelivery(pledgeAmount, 0);
     }
 
-    public int getNextMilestoneIndex() {
+    public Integer getNextMilestoneIndex() {
         return nextMilestoneIndex;
     }
 
-    public void setNextMilestoneIndex(int nextMilestoneIndex) {
+    public void setNextMilestoneIndex(Integer nextMilestoneIndex) {
         this.nextMilestoneIndex = nextMilestoneIndex;
     }
 
     public Milestone getNextMilestone() {
+        if (nextMilestoneIndex == null || nextMilestoneIndex >= milestones.length) {
+            return null;
+        }
         return milestones[nextMilestoneIndex];
     }
 
-    public void moveNextMilestone() {
-        this.nextMilestoneIndex++;
+    public void moveToNextMilestone() {
+        if (nextMilestoneIndex < milestones.length - 1) {
+            nextMilestoneIndex++;
+        } else {
+            nextMilestoneIndex = null;
+            status = Status.COMPLETED;
+        }
     }
 
     public LocalDate getStartDate() {
@@ -144,19 +154,19 @@ public class Project {
         this.startDate = startDate;
     }
 
-    public long getPledgedCKB() {
+    public Long getPledgedCKB() {
         return pledgedCKB;
     }
 
-    public void setPledgedCKB(long pledgedCKB) {
+    public void setPledgedCKB(Long pledgedCKB) {
         this.pledgedCKB = pledgedCKB;
     }
 
-    public int getNumberOfBacker() {
+    public Integer getNumberOfBacker() {
         return numberOfBacker;
     }
 
-    public void setNumberOfBacker(int numberOfBacker) {
+    public void setNumberOfBacker(Integer numberOfBacker) {
         this.numberOfBacker = numberOfBacker;
     }
 

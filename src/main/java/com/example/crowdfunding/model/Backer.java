@@ -2,7 +2,7 @@ package com.example.crowdfunding.model;
 
 public class Backer {
     private String privateKey;
-    private long pledgedCKB;
+    private Long pledgedCKB;
 
     public String getPrivateKey() {
         return privateKey;
@@ -12,11 +12,11 @@ public class Backer {
         this.privateKey = privateKey;
     }
 
-    public long getPledgedCKB() {
+    public Long getPledgedCKB() {
         return pledgedCKB;
     }
 
-    public void setPledgedCKB(long pledgedCKB) {
+    public void setPledgedCKB(Long pledgedCKB) {
         this.pledgedCKB = pledgedCKB;
     }
 

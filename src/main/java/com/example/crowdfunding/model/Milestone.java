@@ -8,16 +8,19 @@ import java.time.LocalDate;
 public class Milestone implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dueDate;
-    private long requiredCKB;
+    private Long requiredCKBPercentage;
     private String description;
-    private int numberOfVoteNo;
+    private Integer numberOfVotedNo;
 
     public Milestone() {
+        numberOfVotedNo = 0;
+        requiredCKBPercentage = 0L;
     }
 
-    public Milestone(LocalDate dueDate, int requiredCKB, String description) {
+    public Milestone(LocalDate dueDate, long requiredCKBPercentage, String description) {
+        super();
         this.dueDate = dueDate;
-        this.requiredCKB = requiredCKB;
+        this.requiredCKBPercentage = requiredCKBPercentage;
         this.description = description;
     }
 
@@ -29,12 +32,12 @@ public class Milestone implements Serializable {
         this.dueDate = dueDate;
     }
 
-    public long getRequiredCKB() {
-        return requiredCKB;
+    public Long getRequiredCKBPercentage() {
+        return requiredCKBPercentage;
     }
 
-    public void setRequiredCKB(long requiredCKB) {
-        this.requiredCKB = requiredCKB;
+    public void setRequiredCKBPercentage(Long requiredCKBPercentage) {
+        this.requiredCKBPercentage = requiredCKBPercentage;
     }
 
     public String getDescription() {
@@ -45,25 +48,25 @@ public class Milestone implements Serializable {
         this.description = description;
     }
 
-    public int getNumberOfVoteNo() {
-        return numberOfVoteNo;
+    public Integer getNumberOfVotedNo() {
+        return numberOfVotedNo;
     }
 
-    public void setNumberOfVoteNo(int numberOfVoteNo) {
-        this.numberOfVoteNo = numberOfVoteNo;
+    public void setNumberOfVotedNo(Integer numberOfVotedNo) {
+        this.numberOfVotedNo = numberOfVotedNo;
     }
 
     public void incrementNumberOfVoteNo() {
-        this.numberOfVoteNo++;
+        this.numberOfVotedNo++;
     }
 
     @Override
     public String toString() {
         return "Milestone{" +
                 "dueDate=" + dueDate +
-                ", requiredCKB=" + requiredCKB +
+                ", requiredCKB=" + requiredCKBPercentage +
                 ", description='" + description + '\'' +
-                ", numberOfVoteNo=" + numberOfVoteNo +
+                ", numberOfVoteNo=" + numberOfVotedNo +
                 '}';
     }
 }
