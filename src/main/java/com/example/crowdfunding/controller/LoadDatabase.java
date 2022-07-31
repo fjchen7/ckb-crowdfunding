@@ -1,5 +1,6 @@
 package com.example.crowdfunding.controller;
 
+import com.example.crowdfunding.model.Milestone;
 import com.example.crowdfunding.model.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.time.LocalDate;
+import java.util.TreeMap;
 
 @Configuration
 class LoadDatabase implements WebMvcConfigurer {
@@ -18,16 +20,49 @@ class LoadDatabase implements WebMvcConfigurer {
     @Bean
     CommandLineRunner initDatabase(ProjectRepository repository) {
         return args -> {
-            Project project = new Project();
-            project.setName("Project 1");
-            project.setDescription("Project 1 description");
-            project.setTarget(100);
-            project.setMilestoneDates(new LocalDate[]{LocalDate.now(),
-                    LocalDate.of(2023, 1, 1)});
-            project.setMilestoneTargets(new short[]{10});
-            project.setMilestoneTargets(new short[]{30});
+            Project project1 = new Project();
+            project1.setName("A project");
+            project1.setDescription("blabla");
+            project1.setCurrent(31500L);
+            project1.setTarget(1000000L);
+            project1.setStarDate(LocalDate.of(2022, 7, 1));
+            project1.setEndDate(LocalDate.of(2022, 10, 1));
+            project1.setCreatorAddress("ckt1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsq0yvcdtsu5wcr2jldtl72fhkruf0w5vymsp6rk9r");
+            project1.setStatus(Project.Status.PLEDGING);
+            project1.setMilestones(new Milestone[]{
+                    new Milestone(LocalDate.of(2022, 12, 1), 30, "Publish 3 levels, need 30% of funding"),
+                    new Milestone(LocalDate.of(2023, 12, 1), 70, "Publish Early Access, need 70% of funding"),
+                    new Milestone(LocalDate.of(2024, 12, 1), 100, "Publish final version, need 100% of funding")});
+            project1.setDeliveries(new TreeMap<Long, String>() {{
+                put(1000L, "A manual");
+                put(10000L, "A manual + instruction book");
+                put(100000L, "A manual + instruction book + original drawing design book");
+            }});
+            project1.setNumberOfBackerInDelivery(1000L, 10);
+            project1.setNumberOfBackerInDelivery(10000L, 2);
+            project1.setNumberOfBacker(15);
 
-            log.info("Preloading " + repository.save(project));
+            Project project2 = new Project();
+            project2.setName("A video game");
+            project2.setDescription("A ACT game");
+            project2.setCurrent(0L);
+            project2.setTarget(10000L);
+            project2.setStarDate(LocalDate.of(2022, 9, 1));
+            project2.setEndDate(LocalDate.of(2022, 12, 1));
+            project2.setCreatorAddress("ckt1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsqvglkprurm00l7hrs3rfqmmzyy3ll7djdsujdm6z");
+            project2.setStatus(Project.Status.CREATED);
+            project2.setMilestones(new Milestone[]{
+                    new Milestone(LocalDate.of(2023, 1, 1), 20, "Publish demo, need 20% of funding"),
+                    new Milestone(LocalDate.of(2023, 8, 1), 60, "Publish Early Access, need 70% of funding"),
+                    new Milestone(LocalDate.of(2024, 12, 31), 100, "Publish final version, need 100% of funding")});
+            project2.setDeliveries(new TreeMap<Long, String>() {{
+                put(1000L, "A painting");
+                put(10000L, "A painting + base game");
+                put(100000L, "A painting + base game + DLC");
+            }});
+
+            log.info("Preloading " + repository.save(project1));
+            log.info("Preloading " + repository.save(project2));
         };
     }
 }
