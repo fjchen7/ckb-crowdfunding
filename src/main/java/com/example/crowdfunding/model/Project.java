@@ -31,6 +31,9 @@ public class Project {
     @ElementCollection
     private Map<Long, Integer> numberOfBackerInDeliveries;
 
+    @Column(columnDefinition = "BLOB")
+    private OutPoint crowdfundingCell;
+
     public Project() {
     }
 
@@ -221,6 +224,14 @@ public class Project {
         setNumberOfBackerInDelivery(pledgeAmount, numberOfBackerInDeliveries.get(pledgeAmount) + 1);
     }
 
+    public OutPoint getCrowdfundingCell() {
+        return crowdfundingCell;
+    }
+
+    public void setCrowdfundingCell(OutPoint crowdfundingCell) {
+        this.crowdfundingCell = crowdfundingCell;
+    }
+
     @Override
     public String toString() {
         return "Project{" +
@@ -238,6 +249,7 @@ public class Project {
                 ", pledgedCKB=" + pledgedCKB +
                 ", numberOfBacker=" + numberOfBacker +
                 ", numberOfBackerInDeliveries=" + numberOfBackerInDeliveries +
+                ", crowdfundingCell=" + crowdfundingCell +
                 '}';
     }
 

@@ -61,6 +61,9 @@ public class ProjectController {
                     if (newProject.getTargetCKB() != null) {
                         project.setTargetCKB(newProject.getTargetCKB());
                     }
+                    if (newProject.getStartupCKB() != null) {
+                        project.setStartupCKB(newProject.getStartupCKB());
+                    }
                     if (newProject.getStartDate() != null) {
                         project.setStartDate(newProject.getStartDate());
                     }
@@ -84,6 +87,9 @@ public class ProjectController {
                     }
                     if (newProject.getNumberOfBackerInDeliveries() != null) {
                         project.setNumberOfBackerInDeliveries(newProject.getNumberOfBackerInDeliveries());
+                    }
+                    if (newProject.getCrowdfundingCell() != null) {
+                        project.setCrowdfundingCell(newProject.getCrowdfundingCell());
                     }
                     return repository.save(project);
                 })
