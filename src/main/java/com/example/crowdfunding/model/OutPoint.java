@@ -1,5 +1,7 @@
 package com.example.crowdfunding.model;
 
+import org.nervos.ckb.utils.Numeric;
+
 import java.io.Serializable;
 
 public class OutPoint implements Serializable {
@@ -11,6 +13,11 @@ public class OutPoint implements Serializable {
 
     public OutPoint(String txHash, Integer index) {
         this.txHash = txHash;
+        this.index = index;
+    }
+
+    public OutPoint(byte[] txHash, Integer index) {
+        this.txHash = Numeric.toHexString(txHash).toLowerCase();
         this.index = index;
     }
 
