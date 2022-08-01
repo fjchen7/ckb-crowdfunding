@@ -1,10 +1,12 @@
 package com.example.crowdfunding.controller;
 
+import com.example.crowdfunding.controller.chain.CrowdfundingCellCreator;
 import com.example.crowdfunding.controller.exception.ProjectNotFoundException;
 import com.example.crowdfunding.model.Backer;
 import com.example.crowdfunding.model.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +16,9 @@ public class ProjectController {
     private static final Logger log = LoggerFactory.getLogger(ProjectController.class);
 
     private final ProjectRepository repository;
+
+    @Autowired
+    private CrowdfundingCellCreator creator;
 
     public ProjectController(ProjectRepository repository) {
         this.repository = repository;
@@ -34,9 +39,8 @@ public class ProjectController {
 
     @PostMapping("/projects")
     public Project newProject(@RequestBody Project newProject) {
-        // TODO: 1. send tx on CKB to create c-cell
-        //       2. store on-chain information to DB
         Project.init(newProject);
+        newProject.setCrowdfundingCell(creator.createCrowdfundingCell(newProject));
         Project project = repository.save(newProject);
         log.info("save new project: " + project);
         return project;
