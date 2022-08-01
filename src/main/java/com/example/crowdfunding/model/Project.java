@@ -1,7 +1,11 @@
 package com.example.crowdfunding.model;
 
 import javax.persistence.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
@@ -24,6 +28,7 @@ public class Project {
     @ElementCollection
     @Column(columnDefinition = "BLOB NOT NULL")
     private Map<Long, String> deliveries;
+    private Long startupCKB;
 
     private Integer nextMilestoneIndex;
     private Long pledgedCKB;
@@ -153,6 +158,14 @@ public class Project {
         deliveries.put(pledgeAmount, delivery);
     }
 
+    public Long getStartupCKB() {
+        return startupCKB;
+    }
+
+    public void setStartupCKB(Long startupCKB) {
+        this.startupCKB = startupCKB;
+    }
+
     public Integer getNextMilestoneIndex() {
         return nextMilestoneIndex;
     }
@@ -240,17 +253,49 @@ public class Project {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", creatorAddress='" + creatorAddress + '\'' +
-                ", targetCKB=" + targetCKB +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
+                ", targetCKB=" + targetCKB +
+                ", pledgedCKB=" + pledgedCKB +
+                ", startupCKB=" + startupCKB +
                 ", milestones=" + Arrays.toString(milestones) +
                 ", deliveries=" + deliveries +
                 ", nextMilestoneIndex=" + nextMilestoneIndex +
-                ", pledgedCKB=" + pledgedCKB +
                 ", numberOfBacker=" + numberOfBacker +
                 ", numberOfBackerInDeliveries=" + numberOfBackerInDeliveries +
                 ", crowdfundingCell=" + crowdfundingCell +
                 '}';
+    }
+
+    public byte[] toData() {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            ByteBuffer bb = ByteBuffer.allocate(8);
+            bb.putLong(startDate.atTime(0, 0, 0).toEpochSecond(ZoneOffset.UTC));
+            out.write(bb.array());
+
+            bb = ByteBuffer.allocate(4);
+            bb.putInt(targetCKB.intValue());
+            out.write(bb.array());
+
+            bb = ByteBuffer.allocate(4);
+            bb.putInt(startupCKB.intValue());
+            out.write(bb.array());
+
+            Long usedCKB = startupCKB;
+            for (int i = 0; i < milestones.length; i++) {
+                Milestone m = milestones[i];
+                bb = ByteBuffer.allocate(13);
+                bb.putLong(m.getDueDate().atTime(0, 0, 0).toEpochSecond(ZoneOffset.UTC));
+                Long amount = targetCKB * m.getTargetCKBPercentage() - usedCKB;
+                bb.putInt(amount.intValue());
+                bb.put(m.getApprovalRatioThreshold().byteValue());
+                out.write(bb.array());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return out.toByteArray();
     }
 
     public enum Status {
