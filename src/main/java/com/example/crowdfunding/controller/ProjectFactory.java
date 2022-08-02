@@ -1,5 +1,6 @@
 package com.example.crowdfunding.controller;
 
+import com.example.crowdfunding.model.Delivery;
 import com.example.crowdfunding.model.Milestone;
 import com.example.crowdfunding.model.OutPoint;
 import com.example.crowdfunding.model.Project;
@@ -12,7 +13,7 @@ public class ProjectFactory {
         Project project1 = new Project();
         project1.setName("A project");
         project1.setDescription("blabla");
-        project1.setPledgedCKB(31500L);
+        project1.setPledgedCKB(600L);
         project1.setTargetCKB(1000000L);
         project1.setStartupCKB(100000L);
         project1.setStartDate(LocalDate.of(2022, 7, 1));
@@ -23,17 +24,12 @@ public class ProjectFactory {
                 new Milestone(LocalDate.of(2022, 12, 1), 30, "Publish 3 levels, need 30% of funding", 30),
                 new Milestone(LocalDate.of(2023, 12, 1), 70, "Publish Early Access, need 70% of funding", 60),
                 new Milestone(LocalDate.of(2024, 12, 1), 100, "Publish final version, need 100% of funding", 100)});
-        project1.setDeliveries(new TreeMap<Long, String>() {{
-            put(1000L, "A manual");
-            put(10000L, "A manual + instruction book");
-            put(100000L, "A manual + instruction book + original drawing design book");
+        project1.setDeliveries(new TreeMap<Long, Delivery>() {{
+            put(1000L, new Delivery("A manual"));
+            put(10000L, new Delivery("A manual + instruction book"));
+            put(100000L, new Delivery("A manual + instruction book + original drawing design book"));
         }});
         project1.setNextMilestoneIndex(0);
-        project1.setNumberOfBackerInDeliveries(new TreeMap<Long, Integer>() {{
-            put(1000L, 10);
-            put(10000L, 2);
-            put(100000L, 0);
-        }});
         project1.setNumberOfBacker(15);
         project1.setCrowdfundingCell(new OutPoint("0xeaf38cc4b076a18fe24a6fce83fb7142f64ee85e695e6b0e815d809124d5e1da", 0));
         return project1;
@@ -54,17 +50,12 @@ public class ProjectFactory {
                 new Milestone(LocalDate.of(2023, 1, 1), 20, "Publish demo, need 20% of funding", 20),
                 new Milestone(LocalDate.of(2023, 8, 1), 60, "Publish Early Access, need 70% of funding", 70),
                 new Milestone(LocalDate.of(2024, 12, 31), 100, "Publish final version, need 100% of funding", 100)});
-        project2.setDeliveries(new TreeMap<Long, String>() {{
-            put(1000L, "A painting");
-            put(10000L, "A painting + base game");
-            put(100000L, "A painting + base game + DLC");
+        project2.setDeliveries(new TreeMap<Long, Delivery>() {{
+            put(1000L, new Delivery("A painting"));
+            put(10000L, new Delivery("A painting + base game"));
+            put(100000L, new Delivery("A painting + base game + DLC"));
         }});
         project2.setNextMilestoneIndex(0);
-        project2.setNumberOfBackerInDeliveries(new TreeMap<Long, Integer>() {{
-            put(1000L, 0);
-            put(10000L, 0);
-            put(100000L, 0);
-        }});
         project2.setCrowdfundingCell(new OutPoint("0x60bc7822c4372ba0154fed16ed520d80e7d87505a95bac0561f95134f71899ba", 0));
         return project2;
     }

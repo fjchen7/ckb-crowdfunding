@@ -26,15 +26,13 @@ public class Project {
     @Column(columnDefinition = "BLOB NOT NULL")
     private Milestone[] milestones;
     @ElementCollection
-    @Column(columnDefinition = "BLOB NOT NULL")
-    private Map<Long, String> deliveries;
+    @Column(columnDefinition = "BLOB")
+    private Map<Long, Delivery> deliveries;
     private Long startupCKB;
 
     private Integer nextMilestoneIndex;
     private Long pledgedCKB;
     private Integer numberOfBacker;
-    @ElementCollection
-    private Map<Long, Integer> numberOfBackerInDeliveries;
 
     @Column(columnDefinition = "BLOB")
     private OutPoint crowdfundingCell;
@@ -65,14 +63,8 @@ public class Project {
         if (project.numberOfBacker == null) {
             project.numberOfBacker = 0;
         }
-        if (project.numberOfBackerInDeliveries == null) {
-            project.numberOfBackerInDeliveries = new TreeMap<>();
-        }
         if (project.deliveries == null) {
-            project.numberOfBackerInDeliveries = new TreeMap<>();
-            for (Long pledgeAmount: project.numberOfBackerInDeliveries.keySet()) {
-                project.numberOfBackerInDeliveries.put(pledgeAmount, 0);
-            }
+            project.deliveries = new TreeMap<>();
         }
     }
 
@@ -140,22 +132,12 @@ public class Project {
         this.milestones = milestones;
     }
 
-    public Map<Long, String> getDeliveries() {
+    public Map<Long, Delivery> getDeliveries() {
         return deliveries;
     }
 
-    public void setDeliveries(Map<Long, String> deliveries) {
+    public void setDeliveries(Map<Long, Delivery> deliveries) {
         this.deliveries = deliveries;
-        for (Long pledgeAmount: this.deliveries.keySet()) {
-            this.setNumberOfBackerInDelivery(pledgeAmount, 0);
-        }
-    }
-
-    public void setDelivery(long pledgeAmount, String delivery) {
-        if (this.deliveries == null) {
-            this.deliveries = new TreeMap<>();
-        }
-        deliveries.put(pledgeAmount, delivery);
     }
 
     public Long getStartupCKB() {
@@ -190,6 +172,20 @@ public class Project {
         }
     }
 
+    public long[] allowedPledgeAmounts() {
+        long[] amounts = new long[deliveries.size()];
+        int i = 0;
+        for (long amount: deliveries.keySet()) {
+            amounts[i++] = amount;
+        }
+        Arrays.sort(amounts);
+        return amounts;
+    }
+
+    public boolean inAllowedPledgeAmounts(long amount) {
+        return deliveries.containsKey(amount);
+    }
+
     public LocalDate getStartDate() {
         return startDate;
     }
@@ -218,23 +214,10 @@ public class Project {
         numberOfBacker++;
     }
 
-    public Map<Long, Integer> getNumberOfBackerInDeliveries() {
-        return numberOfBackerInDeliveries;
-    }
-
-    public void setNumberOfBackerInDeliveries(Map<Long, Integer> numberOfBackerInDeliveries) {
-        this.numberOfBackerInDeliveries = numberOfBackerInDeliveries;
-    }
-
-    public void setNumberOfBackerInDelivery(Long pledgeAmount, Integer numberOfBacker) {
-        if (this.numberOfBackerInDeliveries == null) {
-            this.numberOfBackerInDeliveries = new TreeMap<>();
-        }
-        numberOfBackerInDeliveries.put(pledgeAmount, numberOfBacker);
-    }
-
     public void incrementNumberOfBackerInDelivery(Long pledgeAmount) {
-        setNumberOfBackerInDelivery(pledgeAmount, numberOfBackerInDeliveries.get(pledgeAmount) + 1);
+        if (deliveries.containsKey(pledgeAmount)) {
+            deliveries.get(pledgeAmount).incrementNumber();
+        }
     }
 
     public OutPoint getCrowdfundingCell() {
@@ -253,16 +236,15 @@ public class Project {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", creatorAddress='" + creatorAddress + '\'' +
+                ", targetCKB=" + targetCKB +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
-                ", targetCKB=" + targetCKB +
-                ", pledgedCKB=" + pledgedCKB +
-                ", startupCKB=" + startupCKB +
                 ", milestones=" + Arrays.toString(milestones) +
                 ", deliveries=" + deliveries +
+                ", startupCKB=" + startupCKB +
                 ", nextMilestoneIndex=" + nextMilestoneIndex +
+                ", pledgedCKB=" + pledgedCKB +
                 ", numberOfBacker=" + numberOfBacker +
-                ", numberOfBackerInDeliveries=" + numberOfBackerInDeliveries +
                 ", crowdfundingCell=" + crowdfundingCell +
                 '}';
     }
