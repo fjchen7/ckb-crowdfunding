@@ -7,12 +7,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-public class ProjectNotFoundAdvice {
+public class ExceptionAdvice {
 
     @ResponseBody
     @ExceptionHandler(ProjectNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     String projectNotFoundHandler(ProjectNotFoundException ex) {
+        return ex.getMessage();
+    }
+
+    @ResponseBody
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    String illegalArgumentException(IllegalArgumentException ex) {
         return ex.getMessage();
     }
 }
