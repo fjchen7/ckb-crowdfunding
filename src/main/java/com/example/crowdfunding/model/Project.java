@@ -202,6 +202,10 @@ public class Project {
         this.pledgedCKB = pledgedCKB;
     }
 
+    public void incrementPledgedCKB(long pledgedCKB) {
+        this.pledgedCKB += pledgedCKB;
+    }
+
     public Integer getNumberOfBacker() {
         return numberOfBacker;
     }

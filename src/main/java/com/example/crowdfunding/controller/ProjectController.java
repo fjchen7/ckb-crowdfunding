@@ -1,8 +1,11 @@
 package com.example.crowdfunding.controller;
 
 import com.example.crowdfunding.controller.chain.CrowdfundingCellCreator;
+import com.example.crowdfunding.controller.chain.Pledger;
+import com.example.crowdfunding.controller.exception.NotAllowedPledgedAmountException;
 import com.example.crowdfunding.controller.exception.ProjectNotFoundException;
 import com.example.crowdfunding.model.Backer;
+import com.example.crowdfunding.model.OutPoint;
 import com.example.crowdfunding.model.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +22,8 @@ public class ProjectController {
 
     @Autowired
     private CrowdfundingCellCreator creator;
+    @Autowired
+    private Pledger pledger;
 
     public ProjectController(ProjectRepository repository) {
         this.repository = repository;
@@ -89,9 +94,6 @@ public class ProjectController {
                     if (newProject.getNumberOfBacker() != null) {
                         project.setNumberOfBacker(newProject.getNumberOfBacker());
                     }
-                    if (newProject.getNumberOfBackerInDeliveries() != null) {
-                        project.setNumberOfBackerInDeliveries(newProject.getNumberOfBackerInDeliveries());
-                    }
                     if (newProject.getCrowdfundingCell() != null) {
                         project.setCrowdfundingCell(newProject.getCrowdfundingCell());
                     }
@@ -109,20 +111,18 @@ public class ProjectController {
     }
 
     @PostMapping("/projects/{id}/pledge")
-    public void pledgeProject(@RequestBody Backer backer, @PathVariable Long id) {
+    public OutPoint pledgeProject(@RequestBody Backer backer, @PathVariable Long id) {
         Project project = getOne(id);
-        project.incrementNumberOfBacker();
-        // update number of backer in delivery
-        Long[] pledgedAmounts = project.getDeliveries().keySet().toArray(new Long[0]);
-        pledgedAmounts = java.util.Arrays.copyOf(pledgedAmounts, pledgedAmounts.length + 1);
-        pledgedAmounts[pledgedAmounts.length - 1] = Long.MAX_VALUE;
-        for (int i = pledgedAmounts.length - 1; i >= 0; i++) {
-            if (backer.getPledgedCKB() >= pledgedAmounts[i]) {
-                project.incrementNumberOfBackerInDelivery(pledgedAmounts[i]);
-                break;
-            }
+        if (!project.inAllowedPledgeAmounts(backer.getPledgedCKB())) {
+            throw new NotAllowedPledgedAmountException(project.allowedPledgeAmounts(), backer.getPledgedCKB());
         }
-        // TODO: Send tx to the cheque-like address
+        OutPoint o = pledger.pledge(backer, project);
+        project.incrementNumberOfBacker();
+        project.incrementNumberOfBackerInDelivery(backer.getPledgedCKB());
+        project.incrementPledgedCKB(backer.getPledgedCKB());
+        repository.save(project);
+        log.info("pledge project: " + project.getId() + " from backer: " + backer.address() + " with CKB: " + backer.getPledgedCKB());
+        return o;
     }
 
     @PostMapping("/projects/{id}/voteno")

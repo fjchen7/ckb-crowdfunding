@@ -1,5 +1,10 @@
 package com.example.crowdfunding.model;
 
+import org.nervos.ckb.Network;
+import org.nervos.ckb.crypto.secp256k1.ECKeyPair;
+import org.nervos.ckb.type.Script;
+import org.nervos.ckb.utils.address.Address;
+
 public class Backer {
     private String privateKey;
     private Long pledgedCKB;
@@ -18,6 +23,12 @@ public class Backer {
 
     public void setPledgedCKB(Long pledgedCKB) {
         this.pledgedCKB = pledgedCKB;
+    }
+
+    public Address address() {
+        ECKeyPair keyPair = ECKeyPair.create(privateKey);
+        Script lock = Script.generateSecp256K1Blake160SignhashAllScript(keyPair);
+        return new Address(lock, Network.TESTNET);
     }
 
     @Override
