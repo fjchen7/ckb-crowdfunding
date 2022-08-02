@@ -1,6 +1,7 @@
 package com.example.crowdfunding.controller;
 
 import com.example.crowdfunding.controller.chain.CrowdfundingCellCreator;
+import com.example.crowdfunding.controller.chain.Pledger;
 import org.nervos.ckb.CkbRpcApi;
 import org.nervos.ckb.service.Api;
 import org.nervos.ckb.type.CellDep;
@@ -18,6 +19,9 @@ import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 public class ControllerConfiguration {
@@ -63,5 +67,34 @@ public class ControllerConfiguration {
         creator.setSender(env.getProperty("platform.address"));
         creator.setPrivateKey(env.getProperty("platform.privateKey"));
         return creator;
+    }
+
+    @Bean
+    public Pledger pledger() {
+        Pledger pledger = new Pledger();
+        pledger.setCkbRpcApi(ckbRpcApi());
+        pledger.setCkbIndexerApi(ckbIndexerApi());
+        pledger.setSender(env.getProperty("platform.address"));
+        pledger.setPrivateKey(env.getProperty("platform.privateKey"));
+
+        pledger.setCellDeps(parseCellDep(env.getProperty("pledge.cell.lock.cellDep")));
+        pledger.setLockCodeHash(env.getProperty("pledge.cell.lock.codeHash"));
+        pledger.setLockHashType(Script.HashType.valueOf(env.getProperty("pledge.cell.lock.hashType")));
+        return pledger;
+    }
+
+    private List<CellDep> parseCellDep(String s) {
+        List<CellDep> cellDeps = new ArrayList<>();
+        String[] cellDepsStr = s.split("\n");
+        for (int i = 0; i < cellDepsStr.length; i++) {
+            String str = cellDepsStr[i];
+            str = str.substring(1, str.length() - 1);
+            String[] cellDepStr = str.split(",");
+            cellDeps.add(new CellDep(new OutPoint(
+                    Numeric.hexStringToByteArray(cellDepStr[0]),
+                    Integer.parseInt(cellDepStr[1])),
+                    CellDep.DepType.valueOf(cellDepStr[2])));
+        }
+        return cellDeps;
     }
 }
