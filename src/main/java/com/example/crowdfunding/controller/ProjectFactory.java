@@ -2,8 +2,9 @@ package com.example.crowdfunding.controller;
 
 import com.example.crowdfunding.model.Delivery;
 import com.example.crowdfunding.model.Milestone;
-import com.example.crowdfunding.model.OutPoint;
 import com.example.crowdfunding.model.Project;
+import org.nervos.ckb.type.OutPoint;
+import org.nervos.ckb.utils.Numeric;
 
 import java.time.LocalDate;
 import java.util.TreeMap;
@@ -31,7 +32,7 @@ public class ProjectFactory {
         }});
         project1.setNextMilestoneIndex(0);
         project1.setNumberOfBacker(15);
-        project1.setCrowdfundingCell(new OutPoint("0xeaf38cc4b076a18fe24a6fce83fb7142f64ee85e695e6b0e815d809124d5e1da", 0));
+        project1.setCrowdfundingCell(new OutPoint(Numeric.hexStringToByteArray("0xeaf38cc4b076a18fe24a6fce83fb7142f64ee85e695e6b0e815d809124d5e1da"), 0));
         return project1;
     }
 
@@ -56,7 +57,7 @@ public class ProjectFactory {
             put(100000L, new Delivery("A painting + base game + DLC"));
         }});
         project2.setNextMilestoneIndex(0);
-        project2.setCrowdfundingCell(new OutPoint("0x60bc7822c4372ba0154fed16ed520d80e7d87505a95bac0561f95134f71899ba", 0));
+        project2.setCrowdfundingCell(new OutPoint(Numeric.hexStringToByteArray("0x60bc7822c4372ba0154fed16ed520d80e7d87505a95bac0561f95134f71899ba"), 0));
         return project2;
     }
 }

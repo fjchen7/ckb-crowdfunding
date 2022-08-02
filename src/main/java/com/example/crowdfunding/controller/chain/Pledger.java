@@ -1,7 +1,6 @@
 package com.example.crowdfunding.controller.chain;
 
 import com.example.crowdfunding.model.Backer;
-import com.example.crowdfunding.model.OutPoint;
 import com.example.crowdfunding.model.Project;
 import org.nervos.ckb.CkbRpcApi;
 import org.nervos.ckb.Network;
@@ -12,6 +11,7 @@ import org.nervos.ckb.sign.TransactionWithScriptGroups;
 import org.nervos.ckb.transaction.CkbTransactionBuilder;
 import org.nervos.ckb.type.CellDep;
 import org.nervos.ckb.type.CellOutput;
+import org.nervos.ckb.type.OutPoint;
 import org.nervos.ckb.type.Script;
 import org.nervos.ckb.utils.Numeric;
 import org.nervos.ckb.utils.Utils;
@@ -85,7 +85,7 @@ public class Pledger {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return new com.example.crowdfunding.model.OutPoint(txHash, 0);
+        return new OutPoint(txHash, 0);
     }
 
     private Address getAddress(String privateKey) {

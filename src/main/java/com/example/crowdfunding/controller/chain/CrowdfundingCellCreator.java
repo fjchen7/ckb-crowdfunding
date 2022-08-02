@@ -5,10 +5,7 @@ import org.nervos.ckb.CkbRpcApi;
 import org.nervos.ckb.Network;
 import org.nervos.ckb.sign.TransactionSigner;
 import org.nervos.ckb.sign.TransactionWithScriptGroups;
-import org.nervos.ckb.type.CellDep;
-import org.nervos.ckb.type.CellOutput;
-import org.nervos.ckb.type.Script;
-import org.nervos.ckb.type.TransactionInput;
+import org.nervos.ckb.type.*;
 import org.nervos.ckb.utils.Numeric;
 import org.nervos.ckb.utils.address.Address;
 import org.nervos.indexer.CkbIndexerApi;
@@ -75,7 +72,7 @@ public class CrowdfundingCellCreator {
         return type;
     }
 
-    public com.example.crowdfunding.model.OutPoint createCrowdfundingCell(Project project) {
+    public OutPoint createCrowdfundingCell(Project project) {
         Network network = Network.TESTNET;
         CellOutput cellOutput = newCrowdfundingCell(project);
 
@@ -97,6 +94,6 @@ public class CrowdfundingCellCreator {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return new com.example.crowdfunding.model.OutPoint(txHash, 0);
+        return new OutPoint(txHash, 0);
     }
 }

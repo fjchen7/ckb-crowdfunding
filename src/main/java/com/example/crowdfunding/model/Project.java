@@ -1,5 +1,7 @@
 package com.example.crowdfunding.model;
 
+import org.nervos.ckb.type.OutPoint;
+
 import javax.persistence.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -34,7 +36,8 @@ public class Project {
     private Long pledgedCKB;
     private Integer numberOfBacker;
 
-    @Column(columnDefinition = "BLOB")
+    //    @Column(columnDefinition = "BLOB")
+    @Embedded
     private OutPoint crowdfundingCell;
 
     public Project() {
