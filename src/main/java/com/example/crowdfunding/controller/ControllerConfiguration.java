@@ -20,12 +20,18 @@ import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Configuration
-public class ControllerConfiguration {
+public class ControllerConfiguration implements WebMvcConfigurer {
     private static final Logger log = LoggerFactory.getLogger(ControllerConfiguration.class);
     @Autowired
     private Environment env;
@@ -88,6 +94,32 @@ public class ControllerConfiguration {
         Pledger pledger = new Pledger();
         pledger.setParameters(chequeCellTransactionParameters());
         return pledger;
+    }
+
+    private CorsConfiguration buildConfig() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        // 1允许任何域名使用
+        corsConfiguration.addAllowedOrigin("*");
+        // 2允许任何头
+        corsConfiguration.addAllowedHeader("*");
+        // 3.允许ajax异步请求带cookie信息
+        corsConfiguration.setAllowCredentials(true);
+        // 4允许任何方法（post、get等）
+        corsConfiguration.addAllowedMethod("*");
+        return corsConfiguration;
+    }
+
+    @Bean
+    public CorsFilter corsFilter() {
+
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.setAllowedOriginPatterns(Collections.singletonList("*"));
+        config.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "responseType", "Authorization"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH"));
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
     }
 
     private List<CellDep> parseCellDep(String s) {

@@ -6,10 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-class LoadDatabase implements WebMvcConfigurer {
+class LoadDatabase {
     private static final Logger log = LoggerFactory.getLogger(LoadDatabase.class);
     @Autowired
     private ProjectRepository projectRepository;
