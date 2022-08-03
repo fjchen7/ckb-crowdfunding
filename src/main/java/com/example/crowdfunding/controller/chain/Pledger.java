@@ -74,7 +74,7 @@ public class Pledger {
 
             Script senderLock = backer.getAddressType().getScript();
             hash = senderLock.computeHash();
-            Arrays.copyOfRange(hash, 0, 20);
+            out.write(Arrays.copyOfRange(hash, 0, 20));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
