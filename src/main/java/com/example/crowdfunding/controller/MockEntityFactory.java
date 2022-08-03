@@ -1,10 +1,9 @@
 package com.example.crowdfunding.controller;
 
-import com.example.crowdfunding.model.Backer;
-import com.example.crowdfunding.model.Delivery;
-import com.example.crowdfunding.model.Milestone;
-import com.example.crowdfunding.model.Project;
+import com.example.crowdfunding.model.*;
+import org.nervos.ckb.type.CellOutput;
 import org.nervos.ckb.type.OutPoint;
+import org.nervos.ckb.type.Script;
 import org.nervos.ckb.utils.Numeric;
 
 import java.time.LocalDate;
@@ -69,9 +68,16 @@ public class MockEntityFactory {
         Backer backer1 = new Backer();
         backer1.setProjectId(1L);
         backer1.setPledgedCKB(1000L);
-        backer1.setCurrentPledgedCell(new OutPoint(Numeric.hexStringToByteArray("0xf00b0b53e2a3bf866c7b2b6aa2bc379f6b232abdef560d032f20d09242d87adb"), 0));
+        OnChainCell onChainCell = new OnChainCell();
+        onChainCell.setOutPoint(new OutPoint(Numeric.hexStringToByteArray("0xf00b0b53e2a3bf866c7b2b6aa2bc379f6b232abdef560d032f20d09242d87adb"), 0));
+        onChainCell.setOutput(new CellOutput(1000, new Script(Script.SECP256K1_BLAKE160_SIGNHASH_ALL_CODE_HASH,
+                Numeric.hexStringToByteArray("\"0xe4327ffc3d9be56ae179c2f92ddd998667059d424d3ff1d4c912df6e3894bfb0568492c3ac8d084ae09e5378bed31c63fdd018eb\""))));
+        onChainCell.setOutputData(new byte[0]);
+
+        backer1.addPledgeCell(onChainCell);
         backer1.setPrivateKey("0xa0f2d51b7c9c2a21736617285115a42a124447f277b6df61370ab996583b169f");
         backers.add(backer1);
+        backer1.setVoteNos(new boolean[3]);
         return backers;
     }
 }

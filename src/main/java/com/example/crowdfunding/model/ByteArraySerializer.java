@@ -17,7 +17,6 @@ public class ByteArraySerializer {
     public static class Serializer extends JsonSerializer<byte[]> {
         @Override
         public void serialize(byte[] value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            System.out.println("serialize--:" + value);
             gen.writeString(Numeric.toHexString(value).toLowerCase());
         }
     }
@@ -25,7 +24,6 @@ public class ByteArraySerializer {
     public static class Deserializer extends JsonDeserializer<byte[]> {
         @Override
         public byte[] deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
-            System.out.println("deserialize--:" + p.getValueAsString());
             return Numeric.hexStringToByteArray(p.getValueAsString());
         }
     }

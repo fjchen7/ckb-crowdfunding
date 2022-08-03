@@ -3,15 +3,13 @@ package com.example.crowdfunding.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nervos.ckb.Network;
 import org.nervos.ckb.crypto.secp256k1.ECKeyPair;
-import org.nervos.ckb.type.OutPoint;
 import org.nervos.ckb.type.Script;
 import org.nervos.ckb.utils.address.Address;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Entity
 public class Backer {
@@ -21,14 +19,35 @@ public class Backer {
     private Long projectId;
     private Long pledgedCKB;
 
-    private Long currentPledgedShannon;
-    @Embedded
-    private OutPoint currentPledgedCell;
+    @ElementCollection(targetClass = OnChainCell.class)
+    @Column(columnDefinition = "BLOB")
+    private List<OnChainCell> pledgedCells;
     private boolean[] voteNos;
 
     private String privateKey;
 
     public Backer() {
+        pledgedCells = new ArrayList<>();
+    }
+
+    @JsonIgnore
+    public List<OnChainCell> getPledgedCells() {
+        return pledgedCells;
+    }
+
+    public OnChainCell getCurrentPledgedCell() {
+        if (pledgedCells == null || pledgedCells.size() == 0) {
+            return null;
+        }
+        return pledgedCells.get(pledgedCells.size() - 1);
+    }
+
+    public void setPledgedCells(List<OnChainCell> pledgedCells) {
+        this.pledgedCells = pledgedCells;
+    }
+
+    public void addPledgeCell(OnChainCell pledgedCell) {
+        pledgedCells.add(pledgedCell);
     }
 
     public Long getId() {
@@ -63,28 +82,12 @@ public class Backer {
         this.pledgedCKB = pledgedCKB;
     }
 
-    public Long getCurrentPledgedShannon() {
-        return currentPledgedShannon;
-    }
-
-    public void setCurrentPledgedShannon(Long currentPledgedShannon) {
-        this.currentPledgedShannon = currentPledgedShannon;
-    }
-
     public boolean[] getVoteNos() {
         return voteNos;
     }
 
     public void setVoteNos(boolean[] voteNos) {
         this.voteNos = voteNos;
-    }
-
-    public OutPoint getCurrentPledgedCell() {
-        return currentPledgedCell;
-    }
-
-    public void setCurrentPledgedCell(OutPoint currentPledgedCell) {
-        this.currentPledgedCell = currentPledgedCell;
     }
 
     @JsonIgnore
@@ -104,8 +107,7 @@ public class Backer {
                 "id=" + id +
                 ", projectId=" + projectId +
                 ", pledgedCKB=" + pledgedCKB +
-                ", currentPledgedShannon=" + currentPledgedShannon +
-                ", currentPledgedCell=" + currentPledgedCell +
+                ", pledgedCells=" + pledgedCells +
                 ", voteNos=" + Arrays.toString(voteNos) +
                 ", privateKey='" + privateKey + '\'' +
                 '}';
