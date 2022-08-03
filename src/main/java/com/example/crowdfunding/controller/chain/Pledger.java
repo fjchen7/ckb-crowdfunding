@@ -102,7 +102,7 @@ public class Pledger {
             byte[] hash = receiverLock.computeHash();
             out.write(Arrays.copyOfRange(hash, 0, 20));
 
-            Script senderLock = backer.address().getScript();
+            Script senderLock = backer.getAddressType().getScript();
             hash = senderLock.computeHash();
             Arrays.copyOfRange(hash, 0, 20);
         } catch (IOException e) {

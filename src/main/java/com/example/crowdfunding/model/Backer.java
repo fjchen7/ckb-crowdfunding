@@ -1,5 +1,6 @@
 package com.example.crowdfunding.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nervos.ckb.Network;
 import org.nervos.ckb.crypto.secp256k1.ECKeyPair;
 import org.nervos.ckb.type.OutPoint;
@@ -20,12 +21,9 @@ public class Backer {
     private Long pledgedCKB;
     @Embedded
     private OutPoint pledgedCell;
-
     @ElementCollection(targetClass = MilestonePledgeInfo.class)
     private List<MilestonePledgeInfo> milestonePledgeInfos;
-
     private String privateKey;
-
 
     public Backer() {
         milestonePledgeInfos = new ArrayList<>();
@@ -86,10 +84,15 @@ public class Backer {
         this.milestonePledgeInfos = milestonePledgeInfos;
     }
 
-    public Address address() {
+    @JsonIgnore
+    public Address getAddressType() {
         ECKeyPair keyPair = ECKeyPair.create(privateKey);
         Script lock = Script.generateSecp256K1Blake160SignhashAllScript(keyPair);
         return new Address(lock, Network.TESTNET);
+    }
+
+    public String getAddress() {
+        return getAddressType().encode();
     }
 
     @Override

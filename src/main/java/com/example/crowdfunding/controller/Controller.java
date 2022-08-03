@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-public class ProjectController {
-    private static final Logger log = LoggerFactory.getLogger(ProjectController.class);
+public class Controller {
+    private static final Logger log = LoggerFactory.getLogger(Controller.class);
 
     @Autowired
     private ProjectRepository projectRepository;
@@ -27,7 +27,7 @@ public class ProjectController {
     @Autowired
     private Pledger pledger;
 
-    public ProjectController() {
+    public Controller() {
     }
 
     @GetMapping("/projects")
@@ -122,13 +122,16 @@ public class ProjectController {
         if (!project.inAllowedPledgeAmounts(backer.getPledgedCKB())) {
             throw new NotAllowedPledgedAmountException(project.allowedPledgeAmounts(), backer.getPledgedCKB());
         }
-        OutPoint o = pledger.pledge(backer, project);
+        OutPoint outPoint = pledger.pledge(backer, project);
+        backer.setPledgedCell(outPoint);
+        backer.setProjectId(id);
+        backerRepository.save(backer);
         project.incrementNumberOfBacker();
         project.incrementNumberOfBackerInDelivery(backer.getPledgedCKB());
         project.incrementPledgedCKB(backer.getPledgedCKB());
         projectRepository.save(project);
-        log.info("pledge project: " + project.getId() + " from backer: " + backer.address() + " with CKB: " + backer.getPledgedCKB());
-        return o;
+        log.info("pledge project: " + project.getId() + " from backer: " + backer.getAddressType() + " with CKB: " + backer.getPledgedCKB());
+        return outPoint;
     }
 
     @PostMapping("/projects/{id}/voteno")
