@@ -19,6 +19,7 @@ public class Backer {
     private Long projectId;
     private Long pledgedCKB;
 
+    @Embedded
     @ElementCollection(targetClass = OnChainCell.class)
     @Column(columnDefinition = "BLOB")
     private List<OnChainCell> pledgedCells;
