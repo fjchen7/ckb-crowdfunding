@@ -1,5 +1,6 @@
 package com.example.crowdfunding.controller;
 
+import com.example.crowdfunding.controller.chain.Aggregator;
 import com.example.crowdfunding.controller.chain.CrowdfundingCellCreator;
 import com.example.crowdfunding.controller.chain.Pledger;
 import com.example.crowdfunding.controller.exception.NotAllowedPledgedAmountException;
@@ -7,6 +8,8 @@ import com.example.crowdfunding.controller.exception.ProjectNotFoundException;
 import com.example.crowdfunding.model.Backer;
 import com.example.crowdfunding.model.OnChainCell;
 import com.example.crowdfunding.model.Project;
+import org.nervos.ckb.utils.Numeric;
+import org.nervos.ckb.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,8 @@ public class Controller {
     private CrowdfundingCellCreator creator;
     @Autowired
     private Pledger pledger;
+    @Autowired
+    private Aggregator aggregator;
 
     public Controller() {
     }
@@ -51,8 +56,11 @@ public class Controller {
     @PostMapping("/projects")
     public Project newProject(@RequestBody Project newProject) {
         Project.init(newProject);
+        System.out.println("finish init");
         newProject.setCrowdfundingCell(creator.createCrowdfundingCell(newProject));
+        System.out.println("finish send tx");
         Project project = projectRepository.save(newProject);
+        System.out.println("finish save");
         log.info("save new project: " + project);
         return project;
     }
@@ -147,5 +155,32 @@ public class Controller {
         Project project = getOne(id);
         project.setStatus(Project.Status.FAILED);
         // TODO: send tx to refund
+    }
+
+    @PostMapping("/projects/{id}/aggregate")
+    public String aggregate(@PathVariable Long id) {
+        List<Backer> backers = getBackers(id);
+        Project project = getOne(id);
+        long amount;
+        if (project.getNextMilestoneIndex() == null) {
+            amount = project.getStartupCKB();
+        } else {
+            amount = project.getPledgedCKB() - project.getStartupCKB();
+            int percentage = project.getNextMilestone().getTargetCKBPercentage();
+            for (int i = project.getNextMilestoneIndex() - 1; i >= 0; i--) {
+                percentage -= project.getMilestones()[i].getTargetCKBPercentage();
+            }
+            amount = amount * percentage / 100;
+        }
+        amount = Utils.ckbToShannon(amount);
+        List<OnChainCell> onChainCells = aggregator.aggregate2(backers, project, amount);
+
+        for (int i = 0; i < backers.size(); i++) {
+            backers.get(i).addPledgeCell(onChainCells.get(i));
+            backerRepository.save(backers.get(i));
+        }
+        project.moveToNextMilestone();
+        projectRepository.save(project);
+        return Numeric.toHexString(onChainCells.get(0).getOutPoint().txHash);
     }
 }

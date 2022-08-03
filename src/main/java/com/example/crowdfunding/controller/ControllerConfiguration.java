@@ -1,5 +1,6 @@
 package com.example.crowdfunding.controller;
 
+import com.example.crowdfunding.controller.chain.Aggregator;
 import com.example.crowdfunding.controller.chain.CrowdfundingCellCreator;
 import com.example.crowdfunding.controller.chain.Pledger;
 import com.example.crowdfunding.controller.chain.TransactionParameters;
@@ -94,6 +95,13 @@ public class ControllerConfiguration implements WebMvcConfigurer {
         Pledger pledger = new Pledger();
         pledger.setParameters(chequeCellTransactionParameters());
         return pledger;
+    }
+
+    @Bean
+    public Aggregator aggregator() {
+        Aggregator aggregator = new Aggregator();
+        aggregator.setParameters(chequeCellTransactionParameters());
+        return aggregator;
     }
 
     private CorsConfiguration buildConfig() {

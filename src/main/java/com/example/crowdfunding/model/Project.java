@@ -44,7 +44,6 @@ public class Project {
     }
 
     public static void init(Project project) {
-        project.startDate = LocalDate.now();
         if (project.status == null) {
             project.status = Status.CREATED;
         }
@@ -56,9 +55,6 @@ public class Project {
         }
         if (project.deliveries == null) {
             project.deliveries = new TreeMap<>();
-        }
-        if (project.nextMilestoneIndex == null) {
-            project.nextMilestoneIndex = 0;
         }
         if (project.pledgedCKB == null) {
             project.pledgedCKB = 0L;
@@ -167,11 +163,12 @@ public class Project {
     }
 
     public void moveToNextMilestone() {
-        if (nextMilestoneIndex < milestones.length - 1) {
+        if (nextMilestoneIndex == null) {
+            nextMilestoneIndex = 0;
+        } else if (nextMilestoneIndex < milestones.length - 1) {
             nextMilestoneIndex++;
         } else {
-            nextMilestoneIndex = null;
-            status = Status.COMPLETED;
+            nextMilestoneIndex = -1;
         }
     }
 
