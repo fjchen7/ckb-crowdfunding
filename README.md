@@ -15,28 +15,47 @@ curl -X "POST" "http://localhost:8080/projects" \
   "startDate": "2022-08-15",
   "milestones": [
     {
-      "dueDate": "2023-01-01",
       "description": "demo",
-      "requiredCKBPercentage": 30
+      "approvalRatioThreshold": 70,
+      "targetCKBPercentage": 30,
+      "dueDate": "2023-01-01"
     },
     {
-      "dueDate": "2023-07-01",
       "description": "early release",
-      "requiredCKBPercentage": 70
+      "approvalRatioThreshold": 70,
+      "targetCKBPercentage": 70,
+      "dueDate": "2023-07-01"
     },
     {
-      "dueDate": "2023-12-01",
       "description": "final release",
-      "requiredCKBPercentage": 100
+      "approvalRatioThreshold": 70,
+      "targetCKBPercentage": 100,
+      "dueDate": "2023-12-01"
     }
   ],
   "targetCKB": 500000,
   "deliveries": {
-    "10000": "discount",
-    "100000": "free game"
+    "10000": {
+      "reward": "discount"
+    },
+    "100000": {
+      "reward": "free game"
+    }
   },
   "description": "the best game",
-  "name": "a project"
+  "name": "a project",
+  "startupCKB": 100000
+}'
+```
+
+Pledge to project
+
+```shell
+curl -X "POST" "http://localhost:8080/projects/1/pledge" \
+     -H 'content-type: application/json' \
+     -d $'{
+  "privateKey": "0xa0f2d51b7c9c2a21736617285115a42a124447f277b6df61370ab996583b169f",
+  "pledgedCKB": 1000
 }'
 ```
 
