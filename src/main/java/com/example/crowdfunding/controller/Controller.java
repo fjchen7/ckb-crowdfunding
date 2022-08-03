@@ -5,9 +5,8 @@ import com.example.crowdfunding.controller.chain.Pledger;
 import com.example.crowdfunding.controller.exception.NotAllowedPledgedAmountException;
 import com.example.crowdfunding.controller.exception.ProjectNotFoundException;
 import com.example.crowdfunding.model.Backer;
+import com.example.crowdfunding.model.OnChainCell;
 import com.example.crowdfunding.model.Project;
-import org.nervos.ckb.type.OutPoint;
-import org.nervos.ckb.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,23 +117,22 @@ public class Controller {
     }
 
     @PostMapping("/projects/{id}/pledge")
-    public OutPoint pledgeProject(@RequestBody Backer backer, @PathVariable Long id) {
+    public OnChainCell pledgeProject(@RequestBody Backer backer, @PathVariable Long id) {
         Project project = getOne(id);
         if (!project.inAllowedPledgeAmounts(backer.getPledgedCKB())) {
             throw new NotAllowedPledgedAmountException(project.allowedPledgeAmounts(), backer.getPledgedCKB());
         }
-        OutPoint outPoint = pledger.pledge(backer, project);
+        OnChainCell cell = pledger.pledge(backer, project);
         backer.setProjectId(id);
-        backer.setCurrentPledgedCell(outPoint);
+        backer.addPledgeCell(cell);
         backer.setVoteNos(new boolean[project.getMilestones().length]);
-        backer.setCurrentPledgedShannon(Utils.ckbToShannon(backer.getPledgedCKB()));
         backerRepository.save(backer);
         project.incrementNumberOfBacker();
         project.incrementNumberOfBackerInDelivery(backer.getPledgedCKB());
         project.incrementPledgedCKB(backer.getPledgedCKB());
         projectRepository.save(project);
         log.info("pledge project: " + project.getId() + " from backer: " + backer.getAddressType() + " with CKB: " + backer.getPledgedCKB());
-        return outPoint;
+        return cell;
     }
 
     @PostMapping("/projects/{id}/voteno")

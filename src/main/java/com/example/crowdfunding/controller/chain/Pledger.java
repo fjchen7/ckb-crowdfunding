@@ -1,6 +1,7 @@
 package com.example.crowdfunding.controller.chain;
 
 import com.example.crowdfunding.model.Backer;
+import com.example.crowdfunding.model.OnChainCell;
 import com.example.crowdfunding.model.Project;
 import org.nervos.ckb.Network;
 import org.nervos.ckb.crypto.Blake2b;
@@ -27,7 +28,11 @@ public class Pledger {
         this.parameters = parameters;
     }
 
-    public OutPoint pledge(Backer backer, Project project) {
+    public OnChainCell pledge(Backer backer, Project project) {
+        OnChainCell onChainCell = new OnChainCell();
+        onChainCell.setOutput(newOutput(backer, project, parameters));
+        onChainCell.setOutputData(new byte[0]);
+
         Network network = Network.TESTNET;
         InputIterator iterator = new InputIterator(parameters.getCkbIndexerApi());
         String addr = getAddress(backer.getPrivateKey()).encode();
@@ -35,7 +40,7 @@ public class Pledger {
 
         CkbTransactionBuilder builder = new CkbTransactionBuilder(iterator, network);
         builder.addCellDeps(parameters.getCellDeps());
-        builder.addOutput(newOutput(backer, project, parameters), new byte[0]);
+        builder.addOutput(onChainCell.getOutput(), onChainCell.getOutputData());
         builder.setFeeRate(1000);
         builder.setChangeOutput(addr);
 
@@ -49,7 +54,8 @@ public class Pledger {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return new OutPoint(txHash, 0);
+        onChainCell.setOutPoint(new OutPoint(txHash, 0));
+        return onChainCell;
     }
 
     private Address getAddress(String privateKey) {
