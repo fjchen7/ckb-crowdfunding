@@ -7,6 +7,7 @@ import com.example.crowdfunding.controller.exception.ProjectNotFoundException;
 import com.example.crowdfunding.model.Backer;
 import com.example.crowdfunding.model.Project;
 import org.nervos.ckb.type.OutPoint;
+import org.nervos.ckb.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,8 +124,10 @@ public class Controller {
             throw new NotAllowedPledgedAmountException(project.allowedPledgeAmounts(), backer.getPledgedCKB());
         }
         OutPoint outPoint = pledger.pledge(backer, project);
-        backer.setPledgedCell(outPoint);
         backer.setProjectId(id);
+        backer.setCurrentPledgedCell(outPoint);
+        backer.setVoteNos(new boolean[project.getMilestones().length]);
+        backer.setCurrentPledgedShannon(Utils.ckbToShannon(backer.getPledgedCKB()));
         backerRepository.save(backer);
         project.incrementNumberOfBacker();
         project.incrementNumberOfBackerInDelivery(backer.getPledgedCKB());

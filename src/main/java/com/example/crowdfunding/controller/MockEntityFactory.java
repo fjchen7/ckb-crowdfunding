@@ -69,7 +69,7 @@ public class MockEntityFactory {
         Backer backer1 = new Backer();
         backer1.setProjectId(1L);
         backer1.setPledgedCKB(1000L);
-        backer1.setPledgedCell(new OutPoint(Numeric.hexStringToByteArray("0xf00b0b53e2a3bf866c7b2b6aa2bc379f6b232abdef560d032f20d09242d87adb"), 0));
+        backer1.setCurrentPledgedCell(new OutPoint(Numeric.hexStringToByteArray("0xf00b0b53e2a3bf866c7b2b6aa2bc379f6b232abdef560d032f20d09242d87adb"), 0));
         backer1.setPrivateKey("0xa0f2d51b7c9c2a21736617285115a42a124447f277b6df61370ab996583b169f");
         backers.add(backer1);
         return backers;

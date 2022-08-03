@@ -5,12 +5,13 @@ import org.nervos.ckb.Network;
 import org.nervos.ckb.crypto.secp256k1.ECKeyPair;
 import org.nervos.ckb.type.OutPoint;
 import org.nervos.ckb.type.Script;
-import org.nervos.ckb.utils.Utils;
 import org.nervos.ckb.utils.address.Address;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import java.util.Arrays;
 
 @Entity
 public class Backer {
@@ -19,14 +20,15 @@ public class Backer {
     private Long id;
     private Long projectId;
     private Long pledgedCKB;
+
+    private Long currentPledgedShannon;
     @Embedded
-    private OutPoint pledgedCell;
-    @ElementCollection(targetClass = MilestonePledgeInfo.class)
-    private List<MilestonePledgeInfo> milestonePledgeInfos;
+    private OutPoint currentPledgedCell;
+    private boolean[] voteNos;
+
     private String privateKey;
 
     public Backer() {
-        milestonePledgeInfos = new ArrayList<>();
     }
 
     public Long getId() {
@@ -62,26 +64,27 @@ public class Backer {
     }
 
     public Long getCurrentPledgedShannon() {
-        if (milestonePledgeInfos == null || milestonePledgeInfos.size() == 0) {
-            return Utils.ckbToShannon(pledgedCKB);
-        }
-        return milestonePledgeInfos.get(milestonePledgeInfos.size() - 1).getOutput().capacity;
+        return currentPledgedShannon;
     }
 
-    public OutPoint getPledgedCell() {
-        return pledgedCell;
+    public void setCurrentPledgedShannon(Long currentPledgedShannon) {
+        this.currentPledgedShannon = currentPledgedShannon;
     }
 
-    public void setPledgedCell(OutPoint pledgedCell) {
-        this.pledgedCell = pledgedCell;
+    public boolean[] getVoteNos() {
+        return voteNos;
     }
 
-    public List<MilestonePledgeInfo> getMilestonePledgeInfos() {
-        return milestonePledgeInfos;
+    public void setVoteNos(boolean[] voteNos) {
+        this.voteNos = voteNos;
     }
 
-    public void setMilestonePledgeInfos(List<MilestonePledgeInfo> milestonePledgeInfos) {
-        this.milestonePledgeInfos = milestonePledgeInfos;
+    public OutPoint getCurrentPledgedCell() {
+        return currentPledgedCell;
+    }
+
+    public void setCurrentPledgedCell(OutPoint currentPledgedCell) {
+        this.currentPledgedCell = currentPledgedCell;
     }
 
     @JsonIgnore
@@ -101,8 +104,9 @@ public class Backer {
                 "id=" + id +
                 ", projectId=" + projectId +
                 ", pledgedCKB=" + pledgedCKB +
-                ", pledgedCell=" + pledgedCell +
-                ", milestonePledgeInfos=" + milestonePledgeInfos +
+                ", currentPledgedShannon=" + currentPledgedShannon +
+                ", currentPledgedCell=" + currentPledgedCell +
+                ", voteNos=" + Arrays.toString(voteNos) +
                 ", privateKey='" + privateKey + '\'' +
                 '}';
     }
