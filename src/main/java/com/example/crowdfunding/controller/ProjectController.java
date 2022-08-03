@@ -19,14 +19,16 @@ public class ProjectController {
     private static final Logger log = LoggerFactory.getLogger(ProjectController.class);
 
     private final ProjectRepository repository;
+    private final BackerRepository backerRepository;
 
     @Autowired
     private CrowdfundingCellCreator creator;
     @Autowired
     private Pledger pledger;
 
-    public ProjectController(ProjectRepository repository) {
+    public ProjectController(ProjectRepository repository, BackerRepository backerRepository) {
         this.repository = repository;
+        this.backerRepository = backerRepository;
     }
 
     @GetMapping("/projects")
@@ -40,6 +42,11 @@ public class ProjectController {
         // TODO: update crowdfunding progress from CKB
         return repository.findById(id)
                 .orElseThrow(() -> new ProjectNotFoundException(id));
+    }
+
+    @GetMapping("/projects/{id}/backers")
+    public List<Backer> getBackers(@PathVariable Long id) {
+        return backerRepository.findAllByProjectId(id);
     }
 
     @PostMapping("/projects")
