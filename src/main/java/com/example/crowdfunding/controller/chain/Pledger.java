@@ -2,76 +2,40 @@ package com.example.crowdfunding.controller.chain;
 
 import com.example.crowdfunding.model.Backer;
 import com.example.crowdfunding.model.Project;
-import org.nervos.ckb.CkbRpcApi;
 import org.nervos.ckb.Network;
 import org.nervos.ckb.crypto.Blake2b;
 import org.nervos.ckb.crypto.secp256k1.ECKeyPair;
 import org.nervos.ckb.sign.TransactionSigner;
 import org.nervos.ckb.sign.TransactionWithScriptGroups;
 import org.nervos.ckb.transaction.CkbTransactionBuilder;
-import org.nervos.ckb.type.CellDep;
 import org.nervos.ckb.type.CellOutput;
 import org.nervos.ckb.type.OutPoint;
 import org.nervos.ckb.type.Script;
 import org.nervos.ckb.utils.Numeric;
 import org.nervos.ckb.utils.Utils;
 import org.nervos.ckb.utils.address.Address;
-import org.nervos.indexer.CkbIndexerApi;
 import org.nervos.indexer.InputIterator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 
 public class Pledger {
-    private String lockCodeHash;
-    private Script.HashType lockHashType;
-    private List<CellDep> cellDeps;
+    private TransactionParameters parameters;
 
-    private String sender;
-    private String privateKey;
-
-    private CkbRpcApi ckbRpcApi;
-    private CkbIndexerApi ckbIndexerApi;
-
-    public void setLockCodeHash(String lockCodeHash) {
-        this.lockCodeHash = lockCodeHash;
-    }
-
-    public void setLockHashType(Script.HashType lockHashType) {
-        this.lockHashType = lockHashType;
-    }
-
-    public void setCellDeps(List<CellDep> cellDeps) {
-        this.cellDeps = cellDeps;
-    }
-
-    public void setSender(String sender) {
-        this.sender = sender;
-    }
-
-    public void setPrivateKey(String privateKey) {
-        this.privateKey = privateKey;
-    }
-
-    public void setCkbRpcApi(CkbRpcApi ckbRpcApi) {
-        this.ckbRpcApi = ckbRpcApi;
-    }
-
-    public void setCkbIndexerApi(CkbIndexerApi ckbIndexerApi) {
-        this.ckbIndexerApi = ckbIndexerApi;
+    public void setParameters(TransactionParameters parameters) {
+        this.parameters = parameters;
     }
 
     public OutPoint pledge(Backer backer, Project project) {
         Network network = Network.TESTNET;
-        InputIterator iterator = new InputIterator(ckbIndexerApi);
+        InputIterator iterator = new InputIterator(parameters.getCkbIndexerApi());
         String addr = getAddress(backer.getPrivateKey()).encode();
         iterator.addSearchKey(addr);
 
         CkbTransactionBuilder builder = new CkbTransactionBuilder(iterator, network);
-        builder.addCellDeps(cellDeps);
-        builder.addOutput(newOutput(backer, project), new byte[0]);
+        builder.addCellDeps(parameters.getCellDeps());
+        builder.addOutput(newOutput(backer, project, parameters), new byte[0]);
         builder.setFeeRate(1000);
         builder.setChangeOutput(addr);
 
@@ -81,7 +45,7 @@ public class Pledger {
                 .signTransaction(txWithGroups, backer.getPrivateKey());
         byte[] txHash = new byte[0];
         try {
-            txHash = ckbRpcApi.sendTransaction(txWithGroups.getTxView());
+            txHash = parameters.getCkbRpcApi().sendTransaction(txWithGroups.getTxView());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -94,11 +58,11 @@ public class Pledger {
         return new Address(lock, Network.TESTNET);
     }
 
-    private CellOutput newOutput(Backer backer, Project project) {
+    public static CellOutput newOutput(Backer backer, Project project, TransactionParameters configuration) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
             out.write(Blake2b.digest(project.toData()));
-            Script receiverLock = Address.decode(sender).getScript();
+            Script receiverLock = Address.decode(configuration.getSender()).getScript();
             byte[] hash = receiverLock.computeHash();
             out.write(Arrays.copyOfRange(hash, 0, 20));
 
@@ -109,7 +73,7 @@ public class Pledger {
             throw new RuntimeException(e);
         }
         CellOutput output = new CellOutput();
-        output.lock = new Script(Numeric.hexStringToByteArray(lockCodeHash), out.toByteArray(), lockHashType);
+        output.lock = new Script(Numeric.hexStringToByteArray(configuration.getCodeHash()), out.toByteArray(), configuration.getHashType());
         output.capacity = Utils.ckbToShannon(backer.getPledgedCKB());
         return output;
     }

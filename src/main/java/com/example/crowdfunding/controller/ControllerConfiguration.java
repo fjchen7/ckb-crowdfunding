@@ -2,6 +2,7 @@ package com.example.crowdfunding.controller;
 
 import com.example.crowdfunding.controller.chain.CrowdfundingCellCreator;
 import com.example.crowdfunding.controller.chain.Pledger;
+import com.example.crowdfunding.controller.chain.TransactionParameters;
 import org.nervos.ckb.CkbRpcApi;
 import org.nervos.ckb.service.Api;
 import org.nervos.ckb.type.CellDep;
@@ -54,6 +55,19 @@ public class ControllerConfiguration {
     }
 
     @Bean
+    public TransactionParameters chequeCellTransactionParameters() {
+        TransactionParameters configuration = new TransactionParameters();
+        configuration.setCkbRpcApi(ckbRpcApi());
+        configuration.setCkbIndexerApi(ckbIndexerApi());
+        configuration.setSender(env.getProperty("platform.address"));
+        configuration.setPrivateKey(env.getProperty("platform.privateKey"));
+        configuration.setCellDeps(parseCellDep(env.getProperty("pledge.cell.lock.cellDep")));
+        configuration.setCodeHash(env.getProperty("pledge.cell.lock.codeHash"));
+        configuration.setHashType(Script.HashType.valueOf(env.getProperty("pledge.cell.lock.hashType")));
+        return configuration;
+    }
+
+    @Bean
     public CrowdfundingCellCreator crowdfundingCellCreator() {
         CrowdfundingCellCreator creator = new CrowdfundingCellCreator();
         creator.setTypeCodeHash(env.getProperty("crowdfunding.cell.type.codeHash"));
@@ -72,14 +86,7 @@ public class ControllerConfiguration {
     @Bean
     public Pledger pledger() {
         Pledger pledger = new Pledger();
-        pledger.setCkbRpcApi(ckbRpcApi());
-        pledger.setCkbIndexerApi(ckbIndexerApi());
-        pledger.setSender(env.getProperty("platform.address"));
-        pledger.setPrivateKey(env.getProperty("platform.privateKey"));
-
-        pledger.setCellDeps(parseCellDep(env.getProperty("pledge.cell.lock.cellDep")));
-        pledger.setLockCodeHash(env.getProperty("pledge.cell.lock.codeHash"));
-        pledger.setLockHashType(Script.HashType.valueOf(env.getProperty("pledge.cell.lock.hashType")));
+        pledger.setParameters(chequeCellTransactionParameters());
         return pledger;
     }
 
