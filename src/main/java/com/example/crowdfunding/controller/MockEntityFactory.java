@@ -1,5 +1,6 @@
 package com.example.crowdfunding.controller;
 
+import com.example.crowdfunding.model.Backer;
 import com.example.crowdfunding.model.Delivery;
 import com.example.crowdfunding.model.Milestone;
 import com.example.crowdfunding.model.Project;
@@ -7,9 +8,11 @@ import org.nervos.ckb.type.OutPoint;
 import org.nervos.ckb.utils.Numeric;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
-public class ProjectFactory {
+public class MockEntityFactory {
     public static Project project1() {
         Project project1 = new Project();
         project1.setName("A project");
@@ -59,5 +62,16 @@ public class ProjectFactory {
         project2.setNextMilestoneIndex(0);
         project2.setCrowdfundingCell(new OutPoint(Numeric.hexStringToByteArray("0x60bc7822c4372ba0154fed16ed520d80e7d87505a95bac0561f95134f71899ba"), 0));
         return project2;
+    }
+
+    public static List<Backer> backer1() {
+        List<Backer> backers = new ArrayList<>();
+        Backer backer1 = new Backer();
+        backer1.setProjectId(1L);
+        backer1.setPledgedCKB(1000L);
+        backer1.setPledgedCell(new OutPoint(Numeric.hexStringToByteArray("0xf00b0b53e2a3bf866c7b2b6aa2bc379f6b232abdef560d032f20d09242d87adb"), 0));
+        backer1.setPrivateKey("0xa0f2d51b7c9c2a21736617285115a42a124447f277b6df61370ab996583b169f");
+        backers.add(backer1);
+        return backers;
     }
 }

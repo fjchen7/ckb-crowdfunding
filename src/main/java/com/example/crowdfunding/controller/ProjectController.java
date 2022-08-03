@@ -18,29 +18,28 @@ import java.util.List;
 public class ProjectController {
     private static final Logger log = LoggerFactory.getLogger(ProjectController.class);
 
-    private final ProjectRepository repository;
-    private final BackerRepository backerRepository;
-
+    @Autowired
+    private ProjectRepository projectRepository;
+    @Autowired
+    private BackerRepository backerRepository;
     @Autowired
     private CrowdfundingCellCreator creator;
     @Autowired
     private Pledger pledger;
 
-    public ProjectController(ProjectRepository repository, BackerRepository backerRepository) {
-        this.repository = repository;
-        this.backerRepository = backerRepository;
+    public ProjectController() {
     }
 
     @GetMapping("/projects")
     public List<Project> getAll() {
         // TODO: update crowdfunding progress from CKB
-        return repository.findAll();
+        return projectRepository.findAll();
     }
 
     @GetMapping("/projects/{id}")
     public Project getOne(@PathVariable Long id) {
         // TODO: update crowdfunding progress from CKB
-        return repository.findById(id)
+        return projectRepository.findById(id)
                 .orElseThrow(() -> new ProjectNotFoundException(id));
     }
 
@@ -53,14 +52,14 @@ public class ProjectController {
     public Project newProject(@RequestBody Project newProject) {
         Project.init(newProject);
         newProject.setCrowdfundingCell(creator.createCrowdfundingCell(newProject));
-        Project project = repository.save(newProject);
+        Project project = projectRepository.save(newProject);
         log.info("save new project: " + project);
         return project;
     }
 
     @PutMapping("/projects/{id}")
     public Project replaceProject(@RequestBody Project newProject, @PathVariable Long id) {
-        return repository.findById(id)
+        return projectRepository.findById(id)
                 .map(project -> {
                     if (newProject.getStatus() != null) {
                         project.setStatus(newProject.getStatus());
@@ -104,17 +103,17 @@ public class ProjectController {
                     if (newProject.getCrowdfundingCell() != null) {
                         project.setCrowdfundingCell(newProject.getCrowdfundingCell());
                     }
-                    return repository.save(project);
+                    return projectRepository.save(project);
                 })
                 .orElseGet(() -> {
                     newProject.setId(id);
-                    return repository.save(newProject);
+                    return projectRepository.save(newProject);
                 });
     }
 
     @DeleteMapping("/projects/{id}")
     public void deleteProject(@PathVariable Long id) {
-        repository.deleteById(id);
+        projectRepository.deleteById(id);
     }
 
     @PostMapping("/projects/{id}/pledge")
@@ -127,7 +126,7 @@ public class ProjectController {
         project.incrementNumberOfBacker();
         project.incrementNumberOfBackerInDelivery(backer.getPledgedCKB());
         project.incrementPledgedCKB(backer.getPledgedCKB());
-        repository.save(project);
+        projectRepository.save(project);
         log.info("pledge project: " + project.getId() + " from backer: " + backer.address() + " with CKB: " + backer.getPledgedCKB());
         return o;
     }
