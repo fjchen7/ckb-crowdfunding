@@ -1,0 +1,45 @@
+{
+  "id": 7,
+  "status": "CREATED",
+  "name": "a test project",
+  "description": "the best game",
+  "creatorAddress": "ckt1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsqvglkprurm00l7hrs3rfqmmzyy3ll7djdsujdm6z",
+  "targetCKB": 1000,
+  "startDate": "2023-09-20",
+  "endDate": "2023-12-30",
+  "milestones": [
+    {
+      "dueDate": "2023-01-01",
+      "targetCKBPercentage": 50,
+      "description": "demo",
+      "approvalRatioThreshold": 70,
+      "numberOfVotedNo": 0
+    },
+    {
+      "dueDate": "2023-12-01",
+      "targetCKBPercentage": 100,
+      "description": "final release",
+      "approvalRatioThreshold": 70,
+      "numberOfVotedNo": 0
+    }
+  ],
+  "deliveries": {
+    "200": {
+      "reward": "discount",
+      "numberOfBacker": 0
+    },
+    "500": {
+      "reward": "free game",
+      "numberOfBacker": 0
+    }
+  },
+  "startupCKB": 500,
+  "nextMilestoneIndex": null,
+  "pledgedCKB": 0,
+  "numberOfBacker": 0,
+  "crowdfundingCell": {
+    "txHash": "0xa83a397c323aa57d25217ac5cb876c4d7ceea2cf5439ce5ba10bb1e4057290ce",
+    "index": 0
+  },
+  "nextMilestone": null
+}

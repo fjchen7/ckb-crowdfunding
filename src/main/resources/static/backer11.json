@@ -1,0 +1,27 @@
+{
+  "address": "ckt1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsqdlqxd8tnztz7npgtg0e0zzcc7ccaxn6wg45am9m",
+  "currentPledgedCell": {
+    "outPoint": {
+      "index": 0,
+      "txHash": "0xf6187a2fd959b37dce38297a1e6dc34803f2906ca876af0c40809cc34655c377"
+    },
+    "output": {
+      "capacity": 50000000000,
+      "lock": {
+        "args": "0x440a58b18753fe86614a87d04ce92c31ab9dbe818f563d12cbe62f2d5aaf513c568492c3ac8d084ae09e5378bed31c63fdd018eb1f87e9ddaaa79737f6dc4a4bef2a280a8e9695d6",
+        "codeHash": "0xaedb9b926b660ce844ff6b6f898cd0f13ab1f9d4251e57a172a21a7743499952",
+        "hashType": "DATA"
+      },
+      "type": null
+    },
+    "outputData": "0x"
+  },
+  "id": 3,
+  "pledgedCKB": 500,
+  "privateKey": "0xa0f2d51b7c9c2a21736617285115a42a124447f277b6df61370ab996583b169f",
+  "projectId": 1,
+  "voteNos": [
+    false,
+    false
+  ]
+}

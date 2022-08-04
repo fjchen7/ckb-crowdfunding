@@ -1,0 +1,62 @@
+{
+  "creatorAddress": "ckt1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsqvglkprurm00l7hrs3rfqmmzyy3ll7djdsujdm6z",
+  "crowdfundingCell": {
+    "index": 0,
+    "txHash": "0x60bc7822c4372ba0154fed16ed520d80e7d87505a95bac0561f95134f71899ba"
+  },
+  "deliveries": {
+    "1000": {
+      "numberOfBacker": 0,
+      "reward": "A painting"
+    },
+    "10000": {
+      "numberOfBacker": 0,
+      "reward": "A painting + base game"
+    },
+    "100000": {
+      "numberOfBacker": 0,
+      "reward": "A painting + base game + DLC"
+    }
+  },
+  "description": "A ACT game",
+  "endDate": "2022-12-01",
+  "id": 2,
+  "milestones": [
+    {
+      "approvalRatioThreshold": 20,
+      "description": "Publish demo, need 20% of funding",
+      "dueDate": "2023-01-01",
+      "numberOfVotedNo": 0,
+      "targetCKBPercentage": 20
+    },
+    {
+      "approvalRatioThreshold": 70,
+      "description": "Publish Early Access, need 70% of funding",
+      "dueDate": "2023-08-01",
+      "numberOfVotedNo": 0,
+      "targetCKBPercentage": 60
+    },
+    {
+      "approvalRatioThreshold": 100,
+      "description": "Publish final version, need 100% of funding",
+      "dueDate": "2024-12-31",
+      "numberOfVotedNo": 0,
+      "targetCKBPercentage": 100
+    }
+  ],
+  "name": "A video game",
+  "nextMilestone": {
+    "approvalRatioThreshold": 20,
+    "description": "Publish demo, need 20% of funding",
+    "dueDate": "2023-01-01",
+    "numberOfVotedNo": 0,
+    "targetCKBPercentage": 20
+  },
+  "nextMilestoneIndex": 0,
+  "numberOfBacker": null,
+  "pledgedCKB": 0,
+  "startDate": "2022-09-01",
+  "startupCKB": 1000,
+  "status": "CREATED",
+  "targetCKB": 10000
+}
