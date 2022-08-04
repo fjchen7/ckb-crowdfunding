@@ -172,16 +172,20 @@ public class Controller {
             }
             amount = amount * percentage / 100;
         }
-        System.out.println("aggregate amount: " + amount);
+        if (amount < 100) {
+            return "Project " + id + " is completed.";
+        }
+        System.out.println("aggregated amount: " + amount);
         amount = Utils.ckbToShannon(amount);
         List<OnChainCell> onChainCells = aggregator.aggregate(backers, project, amount);
 
+        log.info("on-chain size: " + onChainCells.size());
         for (int i = 0; i < backers.size(); i++) {
             backers.get(i).addPledgeCell(onChainCells.get(i));
             backerRepository.save(backers.get(i));
         }
         project.moveToNextMilestone();
         projectRepository.save(project);
-        return Numeric.toHexString(onChainCells.get(0).getOutPoint().txHash);
+        return Numeric.toHexString(onChainCells.get(onChainCells.size() - 1).getOutPoint().txHash);
     }
 }

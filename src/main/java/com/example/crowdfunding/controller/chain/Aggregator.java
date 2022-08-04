@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,16 +47,19 @@ public class Aggregator {
         // avoid difference error
         logger.info("total: " + total);
         logger.info("amount: " + amount);
-        int ii = 0;
         if (total - amount > 10) {
-            for (Backer backer: backers) {
+            for (int i = 0; i < backers.size(); i++) {
+                Backer backer = backers.get(i);
                 OnChainCell oldCell = backer.getCurrentPledgedCell();
                 CellOutput output = new CellOutput();
                 output.lock = oldCell.getOutput().lock;
                 output.type = oldCell.getOutput().type;
                 // fee 500
-                output.capacity = (long) (oldCell.getOutput().capacity * ((total - amount) / (float) total) - 500);
-                logger.info("index " + ii++ + " output capacity: " + oldCell.getOutput().capacity);
+                output.capacity = BigInteger.valueOf(oldCell.getOutput().capacity)
+                        .multiply(BigInteger.valueOf(total - amount))
+                        .divide(BigInteger.valueOf(total))
+                        .longValue();
+                logger.info("index " + i + " output capacity: " + oldCell.getOutput().capacity);
                 byte[] outputData = new byte[0];
                 tx.outputs.add(output);
                 tx.outputsData.add(outputData);
@@ -65,12 +69,21 @@ public class Aggregator {
                 newCell.setOutputData(outputData);
                 onChainCells.add(newCell);
             }
+        } else {
+            for (int i = 0; i < backers.size(); i++) {
+                onChainCells.add(null);
+            }
         }
 
         Address receiverAddress = Address.decode(project.getCreatorAddress());
-        CellOutput receiverOutput = new CellOutput(amount, receiverAddress.getScript());
+        CellOutput receiverOutput = new CellOutput(amount - 10000, receiverAddress.getScript());
         tx.outputs.add(receiverOutput);
         tx.outputsData.add(new byte[0]);
+
+        OnChainCell newCell = new OnChainCell();
+        newCell.setOutput(receiverOutput);
+        newCell.setOutputData(new byte[0]);
+        onChainCells.add(newCell);
 
         TransactionWithScriptGroups txWithGroups = new TransactionWithScriptGroups();
         txWithGroups.setTxView(tx);
@@ -93,7 +106,9 @@ public class Aggregator {
             throw new RuntimeException(e);
         }
         for (int i = 0; i < onChainCells.size(); i++) {
-            onChainCells.get(i).setOutPoint(new OutPoint(txHash, i));
+            if (onChainCells.get(i) != null) {
+                onChainCells.get(i).setOutPoint(new OutPoint(txHash, i));
+            }
         }
         return onChainCells;
     }
