@@ -168,7 +168,7 @@ public class Project {
         } else if (nextMilestoneIndex < milestones.length - 1) {
             nextMilestoneIndex++;
         } else {
-            nextMilestoneIndex = -1;
+            nextMilestoneIndex = null;
         }
     }
 
