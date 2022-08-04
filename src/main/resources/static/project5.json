@@ -1,0 +1,51 @@
+{
+  "creatorAddress": "ckt1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsqvglkprurm00l7hrs3rfqmmzyy3ll7djdsujdm6z",
+  "crowdfundingCell": {
+    "index": 0,
+    "txHash": "0x1599933bc2c8b3f30e3746537d5f354d952ee1105e3330a4d09b78207bd00e8c"
+  },
+  "deliveries": {
+    "200": {
+      "numberOfBacker": 0,
+      "reward": "discount"
+    },
+    "500": {
+      "numberOfBacker": 2,
+      "reward": "free game"
+    }
+  },
+  "description": "the best game",
+  "endDate": "2023-12-30",
+  "id": 3,
+  "milestones": [
+    {
+      "approvalRatioThreshold": 70,
+      "description": "demo",
+      "dueDate": "2023-01-01",
+      "numberOfVotedNo": 0,
+      "targetCKBPercentage": 50
+    },
+    {
+      "approvalRatioThreshold": 70,
+      "description": "final release",
+      "dueDate": "2023-12-01",
+      "numberOfVotedNo": 0,
+      "targetCKBPercentage": 100
+    }
+  ],
+  "name": "a test project",
+  "nextMilestone": {
+    "approvalRatioThreshold": 70,
+    "description": "demo",
+    "dueDate": "2023-01-01",
+    "numberOfVotedNo": 0,
+    "targetCKBPercentage": 50
+  },
+  "nextMilestoneIndex": 0,
+  "numberOfBacker": 2,
+  "pledgedCKB": 1000,
+  "startDate": "2023-09-20",
+  "startupCKB": 500,
+  "status": "CREATED",
+  "targetCKB": 1000
+}

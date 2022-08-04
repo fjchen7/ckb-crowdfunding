@@ -1,56 +1,48 @@
-package com.example.crowdfunding.controller;
+package com.example.crowdfunding.controller.chain;
 
 import com.example.crowdfunding.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
 import org.nervos.ckb.type.CellOutput;
 import org.nervos.ckb.type.OutPoint;
 import org.nervos.ckb.type.Script;
 import org.nervos.ckb.utils.Numeric;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
-@Configuration
-class LoadDatabase {
-    private static final Logger log = LoggerFactory.getLogger(LoadDatabase.class);
+@SpringBootTest
+@TestPropertySource(locations = "classpath:application.properties")
+class CrowdfundingCellCreatorTest {
+
     @Autowired
-    private ProjectRepository projectRepository;
-    @Autowired
-    private BackerRepository backerRepository;
+    CrowdfundingCellCreator creator;
 
-    // Load data
-    @Bean
-    CommandLineRunner initDatabase() {
-        return args -> {
-            log.info("Preloading " + projectRepository.save(readProject("project1")));
-            log.info("Preloading " + backerRepository.save(readBacker("backer11")));
-            log.info("Preloading " + backerRepository.save(readBacker("backer13")));
+    //    Project newProject() {
+    //        Project project1 = new Project();
+    //        project1.setStartDate(LocalDate.of(2023, 12, 1));
+    //        project1.setTargetCKB(200L);
+    //        project1.setStartupCKB(100L);
+    //        project1.setMilestones(new Milestone[]{
+    //                new Milestone(LocalDate.of(2022, 12, 1), 75, "Publish 3 levels, need 30% of funding", 30),
+    //                new Milestone(LocalDate.of(2023, 12, 1), 100, "Publish Early Access, need 70% of funding", 60)});
+    //        return project1;
+    //    }
+    @Test
+    void t1() throws IOException {
 
-            log.info("Preloading " + projectRepository.save(readProject("project2")));
-
-            log.info("Preloading " + projectRepository.save(readProject("project5")));
-            log.info("Preloading " + backerRepository.save(readBacker("backer51")));
-            log.info("Preloading " + backerRepository.save(readBacker("backer52")));
-        };
-    }
-
-    private Project readProject(String fileName) throws IOException {
         File resource = new ClassPathResource(
-                "static/" + fileName + ".json").getFile();
+                "static/project1.json").getFile();
         String json = new String(
                 Files.readAllBytes(resource.toPath()));
+        System.out.println(json);
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> map = objectMapper.readValue(json, Map.class);
         Project project = new Project();
@@ -63,6 +55,7 @@ class LoadDatabase {
         project.setStartDate(parseDate((String) map.get("startDate")));
         project.setEndDate(parseDate((String) map.get("endDate")));
 
+
         ArrayList milestonesJson = (ArrayList) (map.get("milestones"));
         Milestone[] milestones = new Milestone[milestonesJson.size()];
         for (int i = 0; i < milestonesJson.size(); i++) {
@@ -72,7 +65,7 @@ class LoadDatabase {
             m.setTargetCKBPercentage((int) mmap.get("targetCKBPercentage"));
             m.setDueDate(parseDate((String) mmap.get("dueDate")));
             m.setApprovalRatioThreshold((int) mmap.get("approvalRatioThreshold"));
-            m.setNumberOfVotedNo((int) mmap.get("numberOfVotedNo"));
+            m.setApprovalRatioThreshold((int) mmap.get("numberOfVotedNo"));
             milestones[i] = m;
         }
         project.setMilestones(milestones);
@@ -98,14 +91,29 @@ class LoadDatabase {
         OutPoint crowdfundingCell = new OutPoint();
         crowdfundingCell.txHash = Numeric.hexStringToByteArray((String) crowdfundingCellJson.get("txHash"));
         crowdfundingCell.index = (int) crowdfundingCellJson.get("index");
-        project.setCrowdfundingCell(crowdfundingCell);
-        return project;
+
+        System.out.println(project);
     }
 
     private LocalDate parseDate(String dateString) {
         String[] d = dateString.split("-");
         return LocalDate.of(Integer.valueOf(d[0]), Integer.valueOf(d[1]),
                 Integer.valueOf(d[2]));
+    }
+
+    public static List<?> convertObjectToList(Object obj) {
+        List<?> list = new ArrayList<>();
+        if (obj.getClass().isArray()) {
+            list = Arrays.asList((Object[]) obj);
+        } else if (obj instanceof Collection) {
+            list = new ArrayList<>((Collection<?>) obj);
+        }
+        return list;
+    }
+
+    @Test
+    public void tt1() throws IOException {
+        readBacker("backer11");
     }
 
     private Backer readBacker(String fileName) throws IOException {
@@ -150,7 +158,7 @@ class LoadDatabase {
         Script script = new Script();
         script.codeHash = Numeric.hexStringToByteArray((String) scriptJson.get("codeHash"));
         script.args = Numeric.hexStringToByteArray((String) scriptJson.get("args"));
-        script.hashType = Script.HashType.valueOf((String) scriptJson.get("hashType"));
         return script;
     }
+
 }
