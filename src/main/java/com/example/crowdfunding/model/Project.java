@@ -268,12 +268,13 @@ public class Project {
             bb.putInt(startupCKB.intValue());
             out.write(bb.array());
 
-            Long usedCKB = startupCKB;
+            Integer calculatedPercentage = 0;
             for (int i = 0; i < milestones.length; i++) {
                 Milestone m = milestones[i];
                 bb = ByteBuffer.allocate(13);
                 bb.putLong(m.getDueDate().atTime(0, 0, 0).toEpochSecond(ZoneOffset.UTC));
-                Long amount = targetCKB * m.getTargetCKBPercentage() - usedCKB;
+                Long amount = (targetCKB - startupCKB) * (m.getTargetCKBPercentage() - calculatedPercentage) / 100;
+                calculatedPercentage += m.getTargetCKBPercentage();
                 bb.putInt(amount.intValue());
                 bb.put(m.getApprovalRatioThreshold().byteValue());
                 out.write(bb.array());
