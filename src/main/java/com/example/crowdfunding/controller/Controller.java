@@ -172,8 +172,9 @@ public class Controller {
             }
             amount = amount * percentage / 100;
         }
+        System.out.println("aggregate amount: " + amount);
         amount = Utils.ckbToShannon(amount);
-        List<OnChainCell> onChainCells = aggregator.aggregate2(backers, project, amount);
+        List<OnChainCell> onChainCells = aggregator.aggregate(backers, project, amount);
 
         for (int i = 0; i < backers.size(); i++) {
             backers.get(i).addPledgeCell(onChainCells.get(i));
