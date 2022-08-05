@@ -59,4 +59,4 @@ curl -X "POST" "http://localhost:8080/projects/1/pledge" \
 }'
 ```
 
-See [ProjectController.java](./src/main/java/com/example/crowdfunding/controller/ProjectController.java) for other REST APIs.
+See [ProjectController.java](src/main/java/com/example/crowdfunding/controller/Controller.java) for other REST APIs.
